@@ -69,14 +69,16 @@ export default async function MarketplacePage({
                   {
                     ...l.instance.chip,
                     collection_id: l.instance.chip.collection.id,
-                    rarity_id: "",
-                    level_id: "",
+                    rarity_id: l.instance.chip.rarity?.slug ?? l.instance.chip.collection.id,
+                    level_id: l.instance.chip.level?.slug ?? l.instance.chip.collection.id,
                     status: "active",
-                    created_at: "",
+                    created_at: l.listed_at,
                     collection: {
                       ...l.instance.chip.collection,
                       status: "active",
                     },
+                    rarity: l.instance.chip.rarity,
+                    level: l.instance.chip.level,
                   } as unknown as ChipWithMeta
                 }
                 href={`/marketplace/${l.id}`}

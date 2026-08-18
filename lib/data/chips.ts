@@ -152,7 +152,7 @@ export async function getPack(id: string) {
 }
 
 const listingSelect =
-  "*, instance:chip_instances!inner(chip_id, serial, acquired_at, chip:chips!inner(id, name, number, image_url, image_crop, base_price, rarity:rarities(slug, name, color, sort_order), level:levels(name, slug, sort_order), collection:collections(id, name, slug, total_minted, sold_count)))";
+  "*, instance:chip_instances!inner(chip_id, serial, acquired_at, chip:chips!inner(id, name, number, image_url, image_crop, base_price, total_minted, sold_count, status, created_at, collection_id, rarity_id, level_id, rarity:rarities(slug, name, color, sort_order), level:levels(name, slug, sort_order), collection:collections(id, name, slug, total_minted, sold_count)))";
 
 export async function getUsernames(
   ids: string[]

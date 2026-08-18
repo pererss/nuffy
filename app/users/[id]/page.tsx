@@ -18,7 +18,7 @@ export default async function UserPage({ params }: { params: Promise<{ id: strin
   if (!profile) notFound();
 
   const cards = listings.listings.map((l) => ({
-    ...(l.instance.chip as unknown as ChipWithMeta),
+    ...(l.instance.chip as ChipWithMeta),
     listing_id: l.id,
     listing_price: l.price,
     serial: l.instance.serial,
@@ -93,7 +93,7 @@ export default async function UserPage({ params }: { params: Promise<{ id: strin
               {cards.map((c) => (
                 <ChipCard
                   key={c.listing_id}
-                  chip={c as unknown as ChipWithMeta}
+                  chip={c}
                   href={`/marketplace/${c.listing_id}`}
                   price={<span className="tabular text-sm font-bold text-ink">{fmtNumber(Math.round(c.listing_price))} ₽</span>}
                 />

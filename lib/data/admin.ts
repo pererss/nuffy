@@ -14,10 +14,14 @@ export async function getDashboardStats() {
     { data: recentRequests },
   ] = await Promise.all([
     admin.from("profiles").select("id", { count: "exact", head: true }),
-    admin.from("purchases").select("price"),
+    admin.from("purchases").select("amount"),
     admin.from("marketplace_listings").select("id", { count: "exact", head: true }).eq("status", "listed"),
-    admin.from("balance_transactions").select("id", { count: "exact", head: true }).eq("status", "pending"),
-    admin.from("instance_events").select("id", { count: "exact", head: true }).eq("event_type", "drop"),
+    admin
+      .from("balance_transactions")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "pending")
+      .in("type", ["deposit", "withdraw"]),
+    admin.from("instance_events").select("id", { count: "exact", head: true }).eq("event", "drop"),
     admin
       .from("balance_transactions")
       .select("*, user:profiles(username)")
@@ -31,7 +35,7 @@ export async function getDashboardStats() {
       .limit(20),
   ]);
 
-  const turnover = (sold ?? []).reduce((s, p) => s + Number(p.price ?? 0), 0);
+  const turnover = (sold ?? []).reduce((s, p) => s + Number(p.amount ?? 0), 0);
 
   return {
     users: users ?? 0,
