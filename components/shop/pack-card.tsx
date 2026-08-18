@@ -38,7 +38,7 @@ export function PackCard({
               className="absolute inset-0"
               style={{
                 background:
-                  "radial-gradient(circle at 30% 20%, #2A3142, #141820 70%)",
+                  "radial-gradient(circle at 30% 20%, rgb(var(--panel-hover)), rgb(var(--base-inset)) 70%)",
               }}
             >
               <span className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(240,185,59,0.12),transparent_60%)]" />

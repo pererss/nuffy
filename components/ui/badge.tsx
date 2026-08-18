@@ -4,11 +4,11 @@ import { Loader2, Lock, Check, Minus } from "lucide-react";
 import { cn, rarityColor } from "@/lib/utils";
 
 const variantColors: Record<string, string> = {
-  ok: "#3DD68C",
-  warn: "#F0875B",
-  danger: "#F25F66",
-  info: "#58A6E8",
-  neutral: "#7C8595",
+  ok: "var(--ok)",
+  warn: "var(--warn)",
+  danger: "var(--danger)",
+  info: "var(--info)",
+  neutral: "var(--ink-faint)",
 };
 
 export function Badge({
@@ -33,16 +33,25 @@ export function Badge({
       )}
       style={
         resolvedColor
-          ? {
-              color: resolvedColor,
-              backgroundColor: `${resolvedColor}1a`,
-              boxShadow: `inset 0 0 0 1px ${resolvedColor}40`,
-            }
+          ? variant
+            ? {
+                color: `rgb(${resolvedColor})`,
+                backgroundColor: `rgb(${resolvedColor} / 0.12)`,
+                boxShadow: `inset 0 0 0 1px rgb(${resolvedColor} / 0.35)`,
+              }
+            : {
+                color: resolvedColor,
+                backgroundColor: `${resolvedColor}1a`,
+                boxShadow: `inset 0 0 0 1px ${resolvedColor}40`,
+              }
           : undefined
       }
     >
       {tone === "dot" && (
-        <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: resolvedColor }} />
+        <span
+          className="h-1.5 w-1.5 rounded-full"
+          style={{ backgroundColor: variant ? `rgb(${resolvedColor})` : resolvedColor }}
+        />
       )}
       {children}
     </span>

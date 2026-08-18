@@ -113,11 +113,12 @@ export function InventoryView({
       >
         <button
           onClick={() => toggle(i.id)}
-          className="absolute left-2.5 top-2.5 z-10 flex h-5 w-5 items-center justify-center rounded border transition-colors"
-          style={{
-            borderColor: selected.has(i.id) ? "#F0B93B" : "#2A3142",
-            background: selected.has(i.id) ? "#F0B93B" : "transparent",
-          }}
+          className={cn(
+            "absolute left-2.5 top-2.5 z-10 flex h-5 w-5 items-center justify-center rounded border transition-colors",
+            selected.has(i.id)
+              ? "border-brand bg-brand text-black"
+              : "border-panel-strong bg-base-inset"
+          )}
         >
           {selected.has(i.id) && (
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
