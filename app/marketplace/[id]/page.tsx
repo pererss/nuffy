@@ -141,7 +141,7 @@ export default async function ListingPage({
                 <span className="text-ink-faint">Номер в коллекции</span>
                 <span className="tabular text-ink">№{chip.number}</span>
               </div>
-              <p className="mt-2 rounded-lg border border-panel-border bg-base-inset p-3 text-[12px] leading-relaxed text-ink-faint">
+              <p className="mt-2 rounded-lg border border-panel-border bg-canvas-inset p-3 text-[12px] leading-relaxed text-ink-faint">
                 После покупки фишка переходит новому владельцу с новым
                 7-дневным lock. Продать её можно будет после истечения lock и
                 полной распродажи коллекции.

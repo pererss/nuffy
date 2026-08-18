@@ -85,13 +85,21 @@ export default async function ChipPage({
         {/* left: chip */}
         <div className="flex flex-col gap-4">
           <Panel className="flex flex-col items-center gap-4 p-6">
-            <ChipImage
-              name={chip.name}
-              imageUrl={chip.image_url}
-              crop={chip.image_crop}
-              rarity={chip.rarity.slug}
-              size={220}
-            />
+            <div
+              className="relative flex w-full items-center justify-center rounded-xl py-2"
+              style={{
+                background:
+                  "radial-gradient(circle at 50% 38%, rgb(var(--brand) / 0.16), rgb(var(--base-inset)) 68%)",
+              }}
+            >
+              <ChipImage
+                name={chip.name}
+                imageUrl={chip.image_url}
+                crop={chip.image_crop}
+                rarity={chip.rarity.slug}
+                size={220}
+              />
+            </div>
             <div className="text-center">
               <h1 className="font-display text-lg font-bold text-ink">
                 {chip.name}
@@ -191,7 +199,7 @@ export default async function ChipPage({
                         </span>
                       </div>
 
-                      <div className="flex flex-col gap-1.5 rounded-lg border border-panel-border bg-base-inset p-3 text-[13px]">
+                      <div className="flex flex-col gap-1.5 rounded-lg border border-panel-border bg-canvas-inset p-3 text-[13px]">
                         {listed ? (
                           <p className="text-ink-soft">
                             Выставлена на площадке за{" "}
@@ -361,7 +369,7 @@ export default async function ChipPage({
                     key={e.id}
                     className={cn(
                       "flex items-center gap-3 px-4 py-2 text-[12px]",
-                      i % 2 === 1 && "bg-base-inset/60"
+                      i % 2 === 1 && "bg-canvas-inset/60"
                     )}
                   >
                     <span className="w-28 shrink-0 text-ink-faint">

@@ -55,7 +55,7 @@
   }
 
   body {
-    @apply bg-bg text-ink font-sans antialiased;
+    @apply bg-canvas text-ink font-sans antialiased;
     font-feature-settings: "ss01" on, "cv01" on;
     min-height: 100vh;
     background-color: rgb(var(--bg));

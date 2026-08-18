@@ -122,14 +122,14 @@ export function UpgradesView({
                 />
               </Field>
               <div className="flex flex-col justify-end gap-1">
-                <div className="flex items-end justify-between rounded-lg border border-panel-border bg-base-inset px-3.5 py-2.5">
+                <div className="flex items-end justify-between rounded-lg border border-panel-border bg-canvas-inset px-3.5 py-2.5">
                   <span className="text-[12px] text-ink-faint">Шанс</span>
                   <span className="font-display text-3xl font-bold tabular text-brand">{chance}%</span>
                 </div>
               </div>
             </div>
 
-            <div className="mt-4 flex items-center justify-between rounded-lg border border-panel-border bg-base-inset px-3.5 py-3 text-[13px]">
+            <div className="mt-4 flex items-center justify-between rounded-lg border border-panel-border bg-canvas-inset px-3.5 py-3 text-[13px]">
               <span className="text-ink-faint">
                 Залог:{" "}
                 <b className="text-ink">{Math.round(sourceValue)} ₽</b>{" "}

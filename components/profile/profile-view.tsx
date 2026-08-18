@@ -71,8 +71,15 @@ export function ProfileView({ data }: { data: ProfileData }) {
   return (
     <div className="grid gap-6 lg:grid-cols-3">
       <div className="flex flex-col gap-4 lg:col-span-2">
-        <Panel className="p-5">
-          <div className="flex items-center gap-4">
+        <Panel className="relative overflow-hidden p-5">
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(circle at 10% 0%, rgb(var(--brand) / 0.14), transparent 52%)",
+            }}
+          />
+          <div className="relative flex items-center gap-4">
             <span className="flex h-14 w-14 items-center justify-center rounded-xl bg-brand/15 font-display text-xl font-bold text-brand">
               {data.username.slice(0, 1).toUpperCase()}
             </span>
@@ -142,7 +149,7 @@ export function ProfileView({ data }: { data: ProfileData }) {
                   : "—",
               },
             ].map((s) => (
-              <div key={s.label} className="rounded-lg border border-panel-border bg-base-inset px-3 py-2.5">
+              <div key={s.label} className="rounded-lg border border-panel-border bg-canvas-inset px-3 py-2.5">
                 <p className="text-[11px] text-ink-faint">{s.label}</p>
                 <p className="mt-0.5 text-[15px] font-semibold tabular text-ink">{s.value}</p>
               </div>
@@ -221,13 +228,13 @@ export function ProfileView({ data }: { data: ProfileData }) {
             </Button>
           </div>
         </Panel>
-        <Panel className={cn("p-5", "bg-base-elevated/50")}>
+        <Panel className={cn("p-5", "bg-canvas-elevated/50")}>
           <h3 className="mb-2 font-display text-sm font-bold text-ink">ID аккаунта</h3>
           <p className="mb-3 text-[12px] leading-relaxed text-ink-faint">
             Нужен для пополнения баланса вручную (администратор использует его
             для зачисления средств).
           </p>
-          <code className="block rounded-lg border border-panel-border bg-base-inset px-3 py-2 font-mono text-[12px] text-brand">
+          <code className="block rounded-lg border border-panel-border bg-canvas-inset px-3 py-2 font-mono text-[12px] text-brand">
             {fmtAccountId(data.accountId)}
           </code>
         </Panel>

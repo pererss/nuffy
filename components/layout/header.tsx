@@ -47,7 +47,7 @@ export function Header({
     pathname === href || pathname.startsWith(`${href}/`);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-panel-border bg-base-elevated/90 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-panel-border bg-canvas-elevated/90 backdrop-blur">
       <div className="mx-auto flex h-14 w-full max-w-[1200px] items-center gap-5 px-4 sm:px-6">
         <Link
           href="/shop"

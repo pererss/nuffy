@@ -79,7 +79,7 @@ export function LevelBadge({ level, className }: { level: string; className?: st
   return (
     <span
       className={cn(
-        "inline-flex h-5 items-center rounded-md border border-panel-strong bg-base-inset px-1.5 text-[11px] font-semibold text-ink-soft",
+        "inline-flex h-5 items-center rounded-md border border-panel-strong bg-canvas-inset px-1.5 text-[11px] font-semibold text-ink-soft",
         className
       )}
     >

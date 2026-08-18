@@ -154,7 +154,7 @@ function PackOpenModal({
         <div className="flex flex-col gap-2.5">
           <p className="text-[13px] text-ink-soft">{pack.description}</p>
           {version && (
-            <div className="flex flex-col gap-1.5 rounded-lg border border-panel-border bg-base-inset p-3">
+            <div className="flex flex-col gap-1.5 rounded-lg border border-panel-border bg-canvas-inset p-3">
               {version.config.tiers.map((t) => (
                 <div key={t.tier_id} className="flex items-center gap-2 text-[12px]">
                   <span className="flex-1 text-ink-soft">Тир «{t.name ?? `#${t.tier_id}`}» — {t.weight}%</span>

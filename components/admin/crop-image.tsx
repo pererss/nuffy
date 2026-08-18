@@ -160,7 +160,7 @@ export function CropImage({
       />
 
       <div
-        className="relative w-[280px] cursor-move touch-none select-none overflow-hidden rounded-xl border border-panel-border bg-base-inset"
+        className="relative w-[280px] cursor-move touch-none select-none overflow-hidden rounded-xl border border-panel-border bg-canvas-inset"
         style={{ height: C }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}

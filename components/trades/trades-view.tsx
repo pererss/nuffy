@@ -122,7 +122,7 @@ export function TradesView({
           </div>
 
           {offer && (
-            <div className="mt-5 rounded-xl border border-panel-border bg-base-inset p-4">
+            <div className="mt-5 rounded-xl border border-panel-border bg-canvas-inset p-4">
               <div className="mb-3 flex items-center justify-between">
                 <p className="text-[13px] font-semibold text-ink">
                   Предложение от{" "}
@@ -149,7 +149,7 @@ export function TradesView({
                             rarity={i.chip.rarity.slug}
                             size={56}
                           />
-                          <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded bg-base px-1 text-[9px] font-semibold tabular text-ink-soft">
+                          <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded bg-canvas px-1 text-[9px] font-semibold tabular text-ink-soft">
                             №{i.serial}
                           </span>
                         </div>
@@ -197,7 +197,7 @@ export function TradesView({
                             "flex items-center gap-2 rounded-lg border p-2 text-left transition",
                             isSel
                               ? "border-brand bg-brand/10"
-                              : "border-panel-border bg-base hover:border-ink-soft"
+                              : "border-panel-border bg-canvas hover:border-ink-soft"
                           )}
                         >
                           <ChipImage

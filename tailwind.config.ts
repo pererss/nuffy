@@ -9,7 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bg: {
+        canvas: {
           DEFAULT: "rgb(var(--bg) / <alpha-value>)",
           elevated: "rgb(var(--surface) / <alpha-value>)",
           inset: "rgb(var(--surface-2) / <alpha-value>)",

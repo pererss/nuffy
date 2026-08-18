@@ -138,7 +138,7 @@ export function CollectionsPanel({
                   <td className="px-3 py-2.5 tabular text-ink">{fmtNumber(c.total_minted)}</td>
                   <td className="px-3 py-2.5">
                     <div className="flex items-center gap-2">
-                      <div className="h-1.5 w-24 overflow-hidden rounded-full bg-base-inset">
+                      <div className="h-1.5 w-24 overflow-hidden rounded-full bg-canvas-inset">
                         <div
                           className="h-full rounded-full bg-brand"
                           style={{ width: `${pct}%` }}

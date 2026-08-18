@@ -83,7 +83,7 @@ export function BalanceModal({ open, onClose }: { open: boolean; onClose: () => 
         </>
       }
     >
-      <div className="mb-4 flex gap-1 rounded-lg bg-base-inset p-1">
+      <div className="mb-4 flex gap-1 rounded-lg bg-canvas-inset p-1">
         {(["deposit", "withdraw", "promo"] as const).map((m) => (
           <button
             key={m}

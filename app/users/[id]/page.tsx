@@ -48,19 +48,19 @@ export default async function UserPage({ params }: { params: Promise<{ id: strin
             </div>
           </div>
           <div className="mt-5 grid grid-cols-2 gap-3">
-            <div className="rounded-lg border border-panel-border bg-base-inset px-3 py-2.5">
+            <div className="rounded-lg border border-panel-border bg-canvas-inset px-3 py-2.5">
               <p className="text-[11px] text-ink-faint">Фишек</p>
               <p className="mt-0.5 text-[15px] font-semibold tabular text-ink">
                 {fmtNumber(stats?.itemsCount ?? 0)}
               </p>
             </div>
-            <div className="rounded-lg border border-panel-border bg-base-inset px-3 py-2.5">
+            <div className="rounded-lg border border-panel-border bg-canvas-inset px-3 py-2.5">
               <p className="text-[11px] text-ink-faint">Листингов</p>
               <p className="mt-0.5 text-[15px] font-semibold tabular text-ink">
                 {fmtNumber(stats?.listingsCount ?? 0)}
               </p>
             </div>
-            <div className="col-span-2 rounded-lg border border-panel-border bg-base-inset px-3 py-2.5">
+            <div className="col-span-2 rounded-lg border border-panel-border bg-canvas-inset px-3 py-2.5">
               <p className="text-[11px] text-ink-faint">Лучший предмет</p>
               {stats?.bestChip ? (
                 <p className="mt-0.5 text-[15px] font-semibold tabular text-ink">

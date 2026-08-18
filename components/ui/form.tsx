@@ -131,7 +131,7 @@ export function Checkbox({
           "flex h-4.5 w-4.5 h-[18px] w-[18px] items-center justify-center rounded border transition-colors",
           checked
             ? "border-brand bg-brand text-black"
-            : "border-panel-strong bg-base-inset"
+            : "border-panel-strong bg-canvas-inset"
         )}
       >
         {checked && (

@@ -117,7 +117,7 @@ export function InventoryView({
             "absolute left-2.5 top-2.5 z-10 flex h-5 w-5 items-center justify-center rounded border transition-colors",
             selected.has(i.id)
               ? "border-brand bg-brand text-black"
-              : "border-panel-strong bg-base-inset"
+              : "border-panel-strong bg-canvas-inset"
           )}
         >
           {selected.has(i.id) && (
@@ -441,7 +441,7 @@ function TradeOfferModal({
             <p className="label-base mb-2">Вы отдаёте ({items.length})</p>
             <div className="flex flex-wrap gap-2">
               {items.map((i) => (
-                <span key={i.id} className="flex items-center gap-1.5 rounded-lg border border-panel-border bg-base-inset px-2 py-1 text-[12px] text-ink-soft">
+                <span key={i.id} className="flex items-center gap-1.5 rounded-lg border border-panel-border bg-canvas-inset px-2 py-1 text-[12px] text-ink-soft">
                   {i.chip_name} №{i.serial}
                 </span>
               ))}
@@ -550,7 +550,7 @@ function UpgradeModal({
       }
     >
       <div className="flex flex-col gap-4">
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-panel-border bg-base-inset p-3.5">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-panel-border bg-canvas-inset p-3.5">
           <div>
             <p className="label-base mb-1">Вы сжигаете</p>
             <div className="flex flex-wrap gap-2">
@@ -590,7 +590,7 @@ function UpgradeModal({
           </Field>
         </div>
 
-        <div className="flex items-center justify-between rounded-lg border border-panel-border bg-base-inset p-3.5">
+        <div className="flex items-center justify-between rounded-lg border border-panel-border bg-canvas-inset p-3.5">
           <div className="flex flex-col gap-0.5 text-[12px]">
             <span className="text-ink-faint">
               Ценность залога: <b className="text-ink">{Math.round(sourceValue + balanceNum)} ₽</b>
