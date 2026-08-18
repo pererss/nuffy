@@ -32,28 +32,24 @@ SUPABASE_SERVICE_ROLE_KEY=            # ← пусто, заполнить!
 
 ---
 
-## 3. Создание таблиц (миграции)
+## 3. Создание таблиц — ОДНА миграция
 
-Файлы миграций лежат в `supabase/migrations/` и выполняются **строго по порядку**:
+Всё необходимое находится в **одном файле**:
 
-1. `001_schema.sql` — все таблицы, индексы, триггеры
-2. `002_functions.sql` — все PL/pgSQL функции (покупки, паки, продажи, обмены, апгрейды, промо, баланс)
-3. `003_rls.sql` — RLS-политики (включение RLS на всех таблицах)
-4. `004_seed.sql` — демо-данные (обязательно! без него сайт пустой)
+- `supabase/migrations/005_full_setup.sql` — схема + функции + RLS + Storage + демо-данные; безопасен для повторного запуска (демо-данные применятся только один раз)
 
-### Способ А — SQL-редактор в браузере (рекомендую для старта)
+Файлы `001_schema.sql` – `004_seed.sql` — только история/справочник, **выполнять их не нужно**, они уже внутри `005`.
+
+### Способ А — SQL-редактор в браузере (рекомендую)
 
 1. Supabase Dashboard → **SQL Editor** → **New query**
-2. Откройте файл `supabase/migrations/001_schema.sql` и вставьте его содержимое в редактор
+2. Откройте файл `supabase/migrations/005_full_setup.sql`, вставьте его содержимое целиком в редактор
 3. **Run** (или Ctrl+Enter)
-4. Повторите для `002_functions.sql`, `003_rls.sql`, `004_seed.sql` — строго по порядку
-
-Если что-то упадёт — смотрите раздел «Проблемы».
+4. Внизу должны появиться числа проверки (`rarities` = 5, `chips` = 33, `pack_versions` = 2, `seed_applied` = 1)
 
 ### Способ Б — Supabase CLI
 
 ```powershell
-# один раз: установить и подключиться к проекту
 npm i -g supabase
 supabase login                          # браузер с GitHub
 supabase link --project-ref gnktrmjlpnrcfunegiik
@@ -151,10 +147,10 @@ npm run start     # проверить prod-сборку локально
 → Пустой `SUPABASE_SERVICE_ROLE_KEY`. Вставьте Secret key из Dashboard → Project Settings → API.
 
 **`relation "chips" does not exist` / `could not find the function public.buy_chip`**
-→ Миграции не применены или применены не все. Повторите шаг 3 (все 4 файла, по порядку).
+→ Миграции не применены. Выполните `005_full_setup.sql` целиком (см. шаг 3); внизу должны появиться числа проверки.
 
 **`permission denied for function/table` (RLS)**
-→ Не применён `003_rls.sql`. Он включает RLS и создаёт политики; функции `security definer` без него не имеют прав.
+→ Не применена часть RLS из `005_full_setup.sql` (или миграции делались до добавления политик). Перезапустите `005_full_setup.sql` целиком — он идемпотентен.
 
 **Ошибка авторизации при входе / «Invalid claim»**
 → Старый anon-ключ vs publishable key. Убедитесь, что в `NEXT_PUBLIC_SUPABASE_ANON_KEY` именно **publishable** ключ из настроек API (приложение работает на publishable-ключах, supabase-js ≥ 2.49).

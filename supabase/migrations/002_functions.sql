@@ -358,7 +358,7 @@ as $$
 declare
   v_uid uuid := public.require_user();
   v_inst public.chip_instances%rowtype;
-  v_status public.sell_status(p_instance_id) jsonb := public.sell_status(p_instance_id);
+  v_status jsonb := public.sell_status(p_instance_id);
   v_listing_id uuid;
 begin
   if p_price <= 0 then raise exception 'invalid_price'; end if;
@@ -967,7 +967,6 @@ revoke all on function public.accept_trade(text, uuid[]) from public;
 revoke all on function public.cancel_trade(uuid) from public;
 revoke all on function public.upgrade_chip(uuid, uuid, numeric) from public;
 revoke all on function public.request_balance_change(text, numeric) from public;
-revoke all on function public.resolve_balance_request(bigint, boolean) from public;
 revoke all on function public.activate_promo(text) from public;
 revoke all on function public.toggle_favorite(uuid) from public;
 revoke all on function public.create_pack_version(uuid, jsonb, jsonb, uuid) from public;
@@ -986,11 +985,9 @@ grant execute on function public.accept_trade(text, uuid[]) to authenticated;
 grant execute on function public.cancel_trade(uuid) to authenticated;
 grant execute on function public.upgrade_chip(uuid, uuid, numeric) to authenticated;
 grant execute on function public.request_balance_change(text, numeric) to authenticated;
-grant execute on function public.resolve_balance_request(bigint, boolean) to authenticated;
+grant execute on function public.resolve_balance_request(bigint, boolean, uuid) to authenticated;
 grant execute on function public.activate_promo(text) to authenticated;
 grant execute on function public.toggle_favorite(uuid) to authenticated;
 grant execute on function public.create_pack_version(uuid, jsonb, jsonb, uuid) to authenticated;
 
 -- seed fix: create_pack_version now takes admin id
-revoke all on function public.resolve_balance_request(bigint, boolean) from public;
-grant execute on function public.resolve_balance_request(bigint, boolean, uuid) to authenticated;
