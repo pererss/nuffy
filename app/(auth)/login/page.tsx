@@ -29,10 +29,25 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-[70vh] items-center justify-center">
-      <div className="panel w-full max-w-sm p-8">
+    <div className="relative flex min-h-[70vh] items-center justify-center overflow-hidden">
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(42rem 42rem at 50% -12%, rgb(var(--brand) / 0.14), transparent 60%)",
+        }}
+      />
+      <div className="panel relative w-full max-w-sm p-8">
+        <div className="mb-5 flex flex-col items-center gap-1 text-center">
+          <span className="font-display text-2xl font-extrabold tracking-tight text-ink">
+            NUFFY
+          </span>
+          <span className="text-[10px] uppercase tracking-[0.32em] text-ink-dim">
+            цифровая коллекция
+          </span>
+        </div>
         <h1 className="font-display text-xl font-bold tracking-tight text-ink">
-          Вход в NUFFY
+          Вход
         </h1>
         <p className="mt-1 text-[13px] text-ink-faint">
           Войдите, чтобы открыть инвентарь и магазин

@@ -45,9 +45,24 @@ export default function RegisterPage() {
 
   if (created) {
     return (
-      <div className="flex min-h-[70vh] items-center justify-center">
-        <div className="panel w-full max-w-sm p-8 text-center">
-          <h1 className="font-display text-xl font-bold text-ink">Почти готово</h1>
+    <div className="relative flex min-h-[70vh] items-center justify-center overflow-hidden">
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(42rem 42rem at 50% -12%, rgb(var(--brand) / 0.14), transparent 60%)",
+        }}
+      />
+      <div className="panel relative w-full max-w-sm p-8 text-center">
+        <div className="mb-4 flex flex-col items-center gap-1">
+          <span className="font-display text-2xl font-extrabold tracking-tight text-ink">
+            NUFFY
+          </span>
+          <span className="text-[10px] uppercase tracking-[0.32em] text-ink-dim">
+            цифровая коллекция
+          </span>
+        </div>
+        <h1 className="font-display text-xl font-bold text-ink">Почти готово</h1>
           <p className="mt-2 text-sm text-ink-soft">
             Мы отправили письмо на указанный email. Подтвердите адрес, затем
             войдите в аккаунт.
@@ -65,13 +80,28 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-[70vh] items-center justify-center">
-      <div className="panel w-full max-w-sm p-8">
+    <div className="relative flex min-h-[70vh] items-center justify-center overflow-hidden">
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(42rem 42rem at 50% -12%, rgb(var(--brand) / 0.14), transparent 60%)",
+        }}
+      />
+      <div className="panel relative w-full max-w-sm p-8">
+        <div className="mb-5 flex flex-col items-center gap-1 text-center">
+          <span className="font-display text-2xl font-extrabold tracking-tight text-ink">
+            NUFFY
+          </span>
+          <span className="text-[10px] uppercase tracking-[0.32em] text-ink-dim">
+            цифровая коллекция
+          </span>
+        </div>
         <h1 className="font-display text-xl font-bold tracking-tight text-ink">
           Регистрация
         </h1>
         <p className="mt-1 text-[13px] text-ink-faint">
-          Создайте аккаунт NUFFY — ваш ID присвоится автоматически
+          Создайте аккаунт — ваш ID присвоится автоматически
         </p>
         <form onSubmit={submit} className="mt-6 flex flex-col gap-4">
           <Field label="Username">
