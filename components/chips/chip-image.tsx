@@ -1,92 +1,153 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import { rarityColor } from "@/lib/utils";
+import { useRef, useState } from "react";
+import { cn, rarityColor } from "@/lib/utils";
 
-function hashHue(name: string) {
-  let h = 0;
-  for (let i = 0; i < name.length; i++) {
-    h = (h * 31 + name.charCodeAt(i)) % 360;
-  }
-  return h;
-}
+type Crop = { x: number; y: number; zoom: number };
 
-/**
- * The chip — the main visual object of NUFFY.
- * Renders a round chip with a rarity ring. When image_url is set,
- * the image is cropped/positioned via image_crop {x, y, zoom}.
- */
 export function ChipImage({
   name,
   imageUrl,
   crop,
   rarity,
-  hue,
   size = 96,
   className,
   ring = true,
+  interactive = true,
 }: {
   name: string;
   imageUrl?: string | null;
-  crop?: { x: number; y: number; zoom: number } | null;
+  crop?: Crop | null;
   rarity: string;
-  hue?: number;
   size?: number;
   className?: string;
   ring?: boolean;
+  interactive?: boolean;
 }) {
-  const h = hue ?? hashHue(name);
   const color = rarityColor(rarity);
-  const hasImage = Boolean(imageUrl);
   const cropObj = crop ?? { x: 0.5, y: 0.5, zoom: 1 };
+  const [rot, setRot] = useState({ x: 0, y: 0 });
+  const [dragging, setDragging] = useState(false);
+  const drag = useRef<{
+    px: number;
+    py: number;
+    rx: number;
+    ry: number;
+    moved: boolean;
+  } | null>(null);
+  const movedRef = useRef(false);
+
+  const onDown = (e: React.PointerEvent) => {
+    if (!interactive) return;
+    drag.current = {
+      px: e.clientX,
+      py: e.clientY,
+      rx: rot.x,
+      ry: rot.y,
+      moved: false,
+    };
+    movedRef.current = false;
+    setDragging(true);
+    (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
+  };
+
+  const onMove = (e: React.PointerEvent) => {
+    if (!drag.current) return;
+    const dx = e.clientX - drag.current.px;
+    const dy = e.clientY - drag.current.py;
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+      drag.current.moved = true;
+      movedRef.current = true;
+    }
+    const ry = Math.max(-42, Math.min(42, drag.current.ry + dx * 0.5));
+    const rx = Math.max(-30, Math.min(30, drag.current.rx - dy * 0.5));
+    setRot({ x: rx, y: ry });
+  };
+
+  const onUp = () => {
+    if (!drag.current) return;
+    drag.current = null;
+    setDragging(false);
+  };
+
+  const onClick = (e: React.MouseEvent) => {
+    if (movedRef.current) {
+      e.preventDefault();
+      e.stopPropagation();
+      movedRef.current = false;
+    }
+  };
+
+  const hasImage = Boolean(imageUrl);
 
   return (
     <span
-      className={cn("chip-glow relative inline-block select-none overflow-hidden", className)}
-      style={{
-        width: size,
-        height: size,
-        ["--rarity" as string]: color,
-        ...(ring
-          ? {
-              boxShadow: `0 0 0 2px ${color}8c, 0 0 18px -2px ${color}50, inset 0 0 0 2px rgba(255,255,255,0.05)`,
-            }
-          : {}),
-      }}
+      className={cn(
+        "relative inline-block select-none",
+        interactive && "cursor-grab active:cursor-grabbing",
+        className
+      )}
+      style={{ width: size, height: size, perspective: "820px" }}
+      onPointerDown={onDown}
+      onPointerMove={onMove}
+      onPointerUp={onUp}
+      onPointerLeave={onUp}
+      onClick={onClick}
     >
-      {hasImage ? (
-        <img
-          src={imageUrl ?? undefined}
-          alt={name}
-          loading="lazy"
-          className="absolute inset-0 h-full w-full select-none object-cover"
-          draggable={false}
+      <span
+        className="relative block h-full w-full overflow-hidden rounded-full"
+        style={{
+          transform: `rotateX(${rot.x}deg) rotateY(${rot.y}deg)`,
+          transformStyle: "preserve-3d",
+          transition: dragging ? "none" : "transform 0.45s cubic-bezier(.2,.8,.2,1)",
+          boxShadow: ring
+            ? `0 0 0 2px ${color}cc, 0 0 20px -2px ${color}66, inset 0 0 0 2px rgba(255,255,255,0.18), 0 10px 26px -10px rgba(0,0,0,0.4)`
+            : "0 10px 26px -12px rgba(0,0,0,0.45)",
+        }}
+      >
+        {hasImage ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={imageUrl ?? undefined}
+            alt={name}
+            loading="lazy"
+            draggable={false}
+            className="absolute inset-0 h-full w-full select-none object-cover"
+            style={{
+              objectPosition: `${cropObj.x * 100}% ${cropObj.y * 100}%`,
+              transform: `scale(${Math.max(1, cropObj.zoom)})`,
+            }}
+          />
+        ) : (
+          <span
+            className="absolute inset-0 flex items-center justify-center"
+            style={{ background: "linear-gradient(150deg, var(--surface-2), var(--bg))" }}
+          >
+            <span
+              className="text-[12px] font-bold uppercase tracking-wider"
+              style={{ color }}
+            >
+              {name.slice(0, 2)}
+            </span>
+          </span>
+        )}
+
+        <span
+          className="pointer-events-none absolute inset-0 rounded-full"
           style={{
-            objectPosition: `${cropObj.x * 100}% ${cropObj.y * 100}%`,
-            transform: `scale(${Math.max(1, cropObj.zoom)})`,
+            background: `radial-gradient(120% 120% at ${50 - rot.y * 0.7}% ${
+              38 - rot.x * 0.7
+            }%, rgba(255,255,255,0.32), transparent 46%)`,
           }}
         />
-      ) : (
         <span
-          className="absolute inset-0"
+          className="pointer-events-none absolute inset-0 rounded-full"
           style={{
-            background: `radial-gradient(circle at 32% 28%, hsl(${h} 62% 42%), hsl(${(h + 45) % 360} 70% 26%) 72%)`,
+            boxShadow:
+              "inset 0 -12px 24px rgba(0,0,0,0.28), inset 0 3px 12px rgba(255,255,255,0.14)",
           }}
-        >
-          <span
-            className="absolute left-1/4 top-1/5 h-2/5 w-2/5 rounded-full opacity-30 blur-[6px]"
-            style={{ background: `hsl(${h} 90% 70%)` }}
-          />
-        </span>
-      )}
-      <span
-        className="pointer-events-none absolute inset-[6%] rounded-full"
-        style={{ boxShadow: "inset 0 0 0 2px rgba(255,255,255,0.10), inset 0 -10px 24px rgba(0,0,0,0.35)" }}
-      />
-      <span
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[76%] w-[76%] -translate-x-1/2 -translate-y-1/2 rounded-full"
-        style={{ boxShadow: "inset 0 0 0 2px rgba(0,0,0,0.35)" }}
-      />
+        />
+      </span>
     </span>
   );
 }

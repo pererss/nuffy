@@ -3,42 +3,94 @@
 @tailwind utilities;
 
 :root {
-  --color-base: #0b0d11;
-  --color-panel: #141820;
-  --color-panel-border: #202634;
-  --color-panel-strong: #2a3142;
-  --color-ink: #e9ebf0;
-  --color-ink-soft: #b4bcc9;
-  --color-ink-faint: #7c8595;
-  --color-ink-dim: #4e5665;
-  --color-brand: #f0b93b;
+  color-scheme: light;
+
+  --bg: 250 244 236;
+  --surface: 255 255 255;
+  --surface-2: 243 234 219;
+  --surface-hover: 246 238 223;
+  --border: 236 220 200;
+  --border-strong: 219 199 172;
+  --ink: 44 36 26;
+  --ink-soft: 111 97 81;
+  --ink-faint: 158 143 123;
+  --ink-dim: 196 181 161;
+  --brand: 215 152 42;
+  --brand-hover: 194 136 31;
+  --ok: 47 165 114;
+  --warn: 217 119 46;
+  --danger: 216 80 78;
+  --info: 62 127 191;
+}
+
+.dark {
+  color-scheme: dark;
+
+  --bg: 14 11 8;
+  --surface: 24 20 15;
+  --surface-2: 34 27 20;
+  --surface-hover: 37 29 21;
+  --border: 45 37 26;
+  --border-strong: 60 49 34;
+  --ink: 242 236 225;
+  --ink-soft: 200 188 169;
+  --ink-faint: 147 133 115;
+  --ink-dim: 94 84 70;
+  --brand: 232 179 71;
+  --brand-hover: 244 198 92;
+  --ok: 47 165 114;
+  --warn: 217 119 46;
+  --danger: 216 80 78;
+  --info: 62 127 191;
 }
 
 @layer base {
+  * {
+    border-color: rgb(var(--border));
+  }
+
   html {
-    color-scheme: dark;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
   body {
-    @apply bg-base text-ink font-sans antialiased;
+    @apply bg-bg text-ink font-sans antialiased;
     font-feature-settings: "ss01" on, "cv01" on;
+    min-height: 100vh;
+    background-color: rgb(var(--bg));
+    background-image:
+      radial-gradient(48rem 48rem at 6% -10%, rgba(232, 179, 71, 0.1), transparent 55%),
+      radial-gradient(44rem 44rem at 100% 0%, rgba(215, 152, 42, 0.07), transparent 50%),
+      radial-gradient(60rem 52rem at 50% 118%, rgba(170, 135, 105, 0.1), transparent 55%);
+    background-attachment: fixed;
+  }
+
+  .dark body {
+    background-image:
+      radial-gradient(50rem 50rem at 8% -12%, rgba(232, 179, 71, 0.1), transparent 55%),
+      radial-gradient(46rem 46rem at 100% 4%, rgba(150, 110, 70, 0.1), transparent 50%),
+      radial-gradient(60rem 52rem at 50% 120%, rgba(60, 45, 30, 0.55), transparent 55%);
   }
 
   ::selection {
-    @apply bg-brand/30 text-ink;
+    background: rgb(var(--brand) / 0.16);
+    color: rgb(var(--ink));
   }
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: #2a3142 transparent;
+    scrollbar-color: rgb(var(--border-strong)) transparent;
   }
   *::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 9px;
+    height: 9px;
   }
   *::-webkit-scrollbar-thumb {
-    background: #2a3142;
-    border-radius: 8px;
+    background: rgb(var(--border-strong));
+    border-radius: 9px;
+    border: 2px solid transparent;
+    background-clip: content-box;
   }
   *::-webkit-scrollbar-track {
     background: transparent;
@@ -53,11 +105,11 @@
 
 @layer components {
   .panel {
-    @apply rounded-panel border border-panel-border bg-panel;
+    @apply rounded-panel border border-panel-border bg-surface shadow-card;
   }
 
   .input-base {
-    @apply w-full rounded-lg border border-panel-border bg-base-inset px-3 py-2 text-sm text-ink placeholder:text-ink-dim outline-none transition-colors focus:border-brand/50 focus:ring-2 focus:ring-brand/10;
+    @apply w-full rounded-xl border border-panel-border bg-surface-2 px-3 py-2 text-sm text-ink placeholder:text-ink-dim outline-none transition-colors focus:border-brand/50 focus:ring-2 focus:ring-brand/10;
   }
 
   .label-base {
@@ -65,9 +117,9 @@
   }
 
   .legal-page .rule-box {
-    border: 1px solid var(--color-panel-border);
-    background: var(--color-panel);
-    border-radius: 12px;
+    border: 1px solid rgb(var(--border));
+    background: rgb(var(--surface));
+    border-radius: 14px;
     padding: 16px 18px;
     margin: 14px 0;
   }
@@ -75,16 +127,16 @@
   .legal-page h3 {
     font-size: 15px;
     font-weight: 600;
-    color: var(--color-ink);
+    color: rgb(var(--ink));
     margin: 0 0 8px;
-    font-family: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
   }
 
   .legal-page p,
   .legal-page li {
     font-size: 14px;
     line-height: 1.7;
-    color: var(--color-ink-soft);
+    color: rgb(var(--ink-soft));
     margin: 8px 0;
   }
 
@@ -94,7 +146,7 @@
   }
 
   .legal-page a {
-    color: var(--color-brand);
+    color: rgb(var(--brand));
     text-decoration: underline;
     text-underline-offset: 3px;
   }
@@ -102,19 +154,19 @@
   .chip-glow {
     position: relative;
     border-radius: 9999px;
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.02));
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.1));
     box-shadow:
-      inset 0 0 0 2px rgba(255, 255, 255, 0.06),
-      inset 0 2px 12px rgba(255, 255, 255, 0.05),
-      0 1px 2px rgba(0, 0, 0, 0.5),
-      0 6px 24px rgba(0, 0, 0, 0.35);
+      inset 0 0 0 2px rgba(255, 255, 255, 0.4),
+      inset 0 2px 12px rgba(255, 255, 255, 0.35),
+      0 1px 2px rgba(0, 0, 0, 0.2),
+      0 8px 26px rgba(0, 0, 0, 0.18);
   }
 
   .chip-ring {
     box-shadow:
       0 0 0 2px color-mix(in srgb, var(--rarity) 55%, transparent),
       0 0 18px -2px color-mix(in srgb, var(--rarity) 30%, transparent),
-      inset 0 0 0 2px rgba(255, 255, 255, 0.05);
+      inset 0 0 0 2px rgba(255, 255, 255, 0.25);
   }
 }
 

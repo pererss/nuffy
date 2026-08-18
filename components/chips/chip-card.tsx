@@ -13,7 +13,7 @@ export function ChipCard({
   sub,
   action,
   className,
-  size = 88,
+  size = 96,
 }: {
   chip: ChipWithMeta;
   href: string;
@@ -26,13 +26,13 @@ export function ChipCard({
   return (
     <div
       className={cn(
-        "panel group relative flex flex-col overflow-hidden transition-all duration-150 hover:border-brand/40 hover:shadow-glow",
+        "panel group flex flex-col overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-cardHover",
         className
       )}
     >
       <Link
         href={href}
-        className="flex flex-col items-center gap-3 px-3 pt-4 outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+        className="flex flex-col items-center gap-3 px-4 pt-5 outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
       >
         <ChipImage
           name={chip.name}
@@ -41,23 +41,25 @@ export function ChipCard({
           rarity={chip.rarity.slug}
           size={size}
         />
-        <div className="flex w-full flex-col gap-1 pb-3">
-          <span className="truncate text-[13px] font-semibold leading-tight text-ink">
+        <div className="flex w-full flex-col gap-1 pb-2 text-center">
+          <span className="truncate text-[14px] font-semibold leading-tight text-ink">
             {chip.name}
           </span>
-          <span className="text-[11px] text-ink-faint">
+          <span className="truncate text-[11px] text-ink-faint">
             {chip.collection.name} · №{chip.number}
           </span>
-          <div className="flex items-center gap-1.5 pt-0.5">
+          <div className="flex items-center justify-center gap-1.5 pt-1">
             <RarityBadge slug={chip.rarity.slug} name={chip.rarity.name} />
             <LevelBadge level={chip.level.name.replace("Level ", "L")} />
           </div>
         </div>
       </Link>
-      <div className="flex items-center justify-between border-t border-panel-border px-3 py-2.5">
-        <div className="flex min-w-0 flex-col gap-0.5">
+      <div className="flex items-center justify-between gap-2 border-t border-panel-border px-4 py-3">
+        <div className="flex min-w-0 flex-col gap-0.5 text-left">
           {price}
-          {sub && <span className="truncate text-[11px] text-ink-faint">{sub}</span>}
+          {sub && (
+            <span className="truncate text-[11px] text-ink-faint">{sub}</span>
+          )}
         </div>
         {action}
       </div>
@@ -67,11 +69,11 @@ export function ChipCard({
 
 export function ChipCardPlaceholder({ className }: { className?: string }) {
   return (
-    <div className={cn("panel flex flex-col items-center gap-3 p-4", className)}>
-      <div className="h-[88px] w-[88px] animate-pulse rounded-full bg-panel-hover" />
-      <div className="h-3 w-2/3 animate-pulse rounded bg-panel-hover" />
-      <div className="h-2.5 w-1/2 animate-pulse rounded bg-panel-hover" />
-      <div className="mt-2 h-8 w-full animate-pulse rounded-lg bg-panel-hover" />
+    <div className={cn("panel flex flex-col items-center gap-3 p-5", className)}>
+      <div className="h-[96px] w-[96px] animate-pulse rounded-full bg-surface-hover" />
+      <div className="h-3 w-2/3 animate-pulse rounded bg-surface-hover" />
+      <div className="h-2.5 w-1/2 animate-pulse rounded bg-surface-hover" />
+      <div className="mt-2 h-9 w-full animate-pulse rounded-lg bg-surface-hover" />
     </div>
   );
 }

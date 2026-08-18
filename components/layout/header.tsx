@@ -14,6 +14,7 @@ import {
 import { cn, fmtPrice } from "@/lib/utils";
 import { Popover, MenuItem } from "@/components/ui/dropdown";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme";
 import { useToast } from "@/components/ui/toast";
 import { BalanceModal } from "@/components/profile/balance-modal";
 import { signOut } from "@/lib/actions/auth";
@@ -73,6 +74,8 @@ export function Header({
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
+          <ThemeToggle />
+
           {user ? (
             <>
               <button
