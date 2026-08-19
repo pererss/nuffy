@@ -2,12 +2,18 @@ import { cn, fmtPrice } from "@/lib/utils";
 
 export function Panel({
   className,
+  style,
   children,
 }: {
   className?: string;
+  style?: React.CSSProperties;
   children: React.ReactNode;
 }) {
-  return <div className={cn("panel", className)}>{children}</div>;
+  return (
+    <div className={cn("panel", className)} style={style}>
+      {children}
+    </div>
+  );
 }
 
 export function PanelHeader({
@@ -136,7 +142,7 @@ export function PageHeader({
   right?: React.ReactNode;
 }) {
   return (
-    <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+    <div className="animate-fade-in mb-5 flex flex-wrap items-end justify-between gap-3">
       <div>
         <h1 className="flex items-center gap-2.5 font-display text-xl font-bold tracking-tight text-ink">
           <span className="inline-block h-3 w-3 rounded-[3px] border-2 border-brand" />

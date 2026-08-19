@@ -105,16 +105,17 @@ export function InventoryView({
 
   const selectableIds = filtered.filter((i) => i.status === "owned").map((i) => i.id);
 
-  const renderCompactItem = (i: InventoryRow) => {
+  const renderCompactItem = (i: InventoryRow, idx = 0) => {
     const lock = lockInfo(i.locked_until);
     const sell = sellCheck(i);
     return (
       <div
         key={i.id}
         className={cn(
-          "panel flex items-center gap-3 px-3 py-2 transition-all duration-150",
+          "panel flex items-center gap-3 px-3 py-2 transition-all duration-150 animate-fade-up",
           selected.has(i.id) && "border-brand/50 shadow-glow"
         )}
+        style={{ animationDelay: `${Math.min(idx, 20) * 40}ms` }}
       >
         <button
           onClick={() => toggle(i.id)}
@@ -189,16 +190,17 @@ export function InventoryView({
     );
   };
 
-  const renderItem = (i: InventoryRow) => {
+  const renderItem = (i: InventoryRow, idx = 0) => {
     const lock = lockInfo(i.locked_until);
     const sell = sellCheck(i);
     return (
       <div
         key={i.id}
         className={cn(
-          "panel group relative flex flex-col overflow-hidden transition-all duration-150",
+          "panel group relative flex flex-col overflow-hidden transition-all duration-150 animate-fade-up",
           selected.has(i.id) && "border-brand/50 shadow-glow"
         )}
+        style={{ animationDelay: `${Math.min(idx, 20) * 40}ms` }}
       >
         <button
           onClick={() => toggle(i.id)}
@@ -394,20 +396,20 @@ export function InventoryView({
                 {name} · {list.length}
               </h2>
               {compact ? (
-                <div className="flex flex-col gap-2">{list.map(renderCompactItem)}</div>
+                <div className="flex flex-col gap-2">{list.map((i, idx) => renderCompactItem(i, idx))}</div>
               ) : (
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                  {list.map(renderItem)}
+                  {list.map((i, idx) => renderItem(i, idx))}
                 </div>
               )}
             </section>
           ))}
         </div>
       ) : compact ? (
-        <div className="flex flex-col gap-2">{filtered.map(renderCompactItem)}</div>
+        <div className="flex flex-col gap-2">{filtered.map((i, idx) => renderCompactItem(i, idx))}</div>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          {filtered.map(renderItem)}
+          {filtered.map((i, idx) => renderItem(i, idx))}
         </div>
       )}
 

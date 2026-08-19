@@ -38,7 +38,7 @@ export default async function ShopPage({
       level: str("level") || undefined,
       priceMin: num("price_min"),
       priceMax: num("price_max"),
-      avail: (str("avail") || undefined) as "in_stock" | "sold_out" | undefined,
+      avail: (str("avail") || "in_stock") as "in_stock" | "sold_out" | undefined,
       sort: (str("sort") || undefined) as
         | "popular"
         | "price_asc"
@@ -100,14 +100,19 @@ export default async function ShopPage({
               Паки
             </h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {visiblePacks.map(({ pack, version, items }) => (
-                <PackCard
+              {visiblePacks.map(({ pack, version, items }, i) => (
+                <div
                   key={pack.id}
-                  pack={pack}
-                  version={version as NonNullable<typeof version>}
-                  items={items ?? []}
-                  userId={user?.id ?? null}
-                />
+                  className="animate-fade-up"
+                  style={{ animationDelay: `${i * 60}ms` }}
+                >
+                  <PackCard
+                    pack={pack}
+                    version={version as NonNullable<typeof version>}
+                    items={items ?? []}
+                    userId={user?.id ?? null}
+                  />
+                </div>
               ))}
             </div>
           </section>
@@ -132,27 +137,32 @@ export default async function ShopPage({
           />
         ) : (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-            {shop.chips.map((chip) => (
-              <ChipCard
+            {shop.chips.map((chip, i) => (
+              <div
                 key={chip.id}
-                chip={chip}
-                href={`/chips/${chip.id}`}
-                price={
-                  <Price value={chip.base_price} size="sm" />
-                }
-                sub={
-                  chip.sold_count >= chip.total_minted
-                    ? "Распродано"
-                    : `Осталось: ${fmtNumber(chip.total_minted - chip.sold_count)}`
-                }
-                action={
-                  <BuyChipButton
-                    chipId={chip.id}
-                    userId={user?.id ?? null}
-                    stock={chip.total_minted - chip.sold_count}
-                  />
-                }
-              />
+                className="animate-fade-up"
+                style={{ animationDelay: `${Math.min(i, 14) * 45}ms` }}
+              >
+                <ChipCard
+                  chip={chip}
+                  href={`/chips/${chip.id}`}
+                  price={
+                    <Price value={chip.base_price} size="sm" />
+                  }
+                  sub={
+                    chip.sold_count >= chip.total_minted
+                      ? "Распродано"
+                      : `Осталось: ${fmtNumber(chip.total_minted - chip.sold_count)}`
+                  }
+                  action={
+                    <BuyChipButton
+                      chipId={chip.id}
+                      userId={user?.id ?? null}
+                      stock={chip.total_minted - chip.sold_count}
+                    />
+                  }
+                />
+              </div>
             ))}
           </div>
         )}

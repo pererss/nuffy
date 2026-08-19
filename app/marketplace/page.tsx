@@ -60,9 +60,14 @@ export default async function MarketplacePage({
         />
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          {result.listings.map((l) => {
+          {result.listings.map((l, i) => {
             const seller = userNameMap.get(l.seller_id);
             return (
+              <div
+                key={l.id}
+                className="animate-fade-up"
+                style={{ animationDelay: `${Math.min(i, 14) * 45}ms` }}
+              >
               <ChipCard
                 key={l.id}
                 chip={
@@ -90,6 +95,7 @@ export default async function MarketplacePage({
                 }
                 action={<span className="text-[11px] text-ink-faint">{fmtDate(l.listed_at)}</span>}
               />
+              </div>
             );
           })}
         </div>

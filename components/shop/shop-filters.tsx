@@ -36,7 +36,7 @@ export function ShopFilters({
   const [collection, setCollection] = useState(params.get("collection") ?? "");
   const [rarity, setRarity] = useState(params.get("rarity") ?? "");
   const [level, setLevel] = useState(params.get("level") ?? "");
-  const [avail, setAvail] = useState(params.get("avail") ?? "");
+  const [avail, setAvail] = useState(params.get("avail") ?? "in_stock");
   const [priceMin, setPriceMin] = useState(params.get("price_min") ?? "");
   const [priceMax, setPriceMax] = useState(params.get("price_max") ?? "");
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -47,7 +47,7 @@ export function ShopFilters({
     setCollection(params.get("collection") ?? "");
     setRarity(params.get("rarity") ?? "");
     setLevel(params.get("level") ?? "");
-    setAvail(params.get("avail") ?? "");
+    setAvail(params.get("avail") ?? "in_stock");
     setPriceMin(params.get("price_min") ?? "");
     setPriceMax(params.get("price_max") ?? "");
   }, [params]);
@@ -88,6 +88,7 @@ export function ShopFilters({
             e.target.value === "popular"
               ? sp.delete("sort")
               : sp.set("sort", e.target.value);
+            if (avail !== "in_stock") sp.set("avail", avail);
             sp.set("page", "1");
             router.push(`${pathname}?${sp}`);
           }}

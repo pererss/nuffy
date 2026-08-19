@@ -15,8 +15,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [created, setCreated] = useState(false);
+const [loading, setLoading] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,47 +36,12 @@ export default function RegisterPage() {
     const res = await signUp(email.trim().toLowerCase(), password, clean);
     setLoading(false);
     if (res.ok) {
-      setCreated(true);
+      toast("Аккаунт создан — теперь войдите", "success");
+      router.push("/login");
     } else {
       toast(res.error, "error");
     }
   };
-
-  if (created) {
-    return (
-    <div className="relative flex min-h-[70vh] items-center justify-center overflow-hidden">
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(42rem 42rem at 50% -12%, rgb(var(--brand) / 0.14), transparent 60%)",
-        }}
-      />
-      <div className="panel relative w-full max-w-sm p-8 text-center">
-        <div className="mb-4 flex flex-col items-center gap-1">
-          <span className="font-display text-2xl font-extrabold tracking-tight text-ink">
-            NUFFY
-          </span>
-          <span className="text-[10px] uppercase tracking-[0.32em] text-ink-dim">
-            цифровая коллекция
-          </span>
-        </div>
-        <h1 className="font-display text-xl font-bold text-ink">Почти готово</h1>
-          <p className="mt-2 text-sm text-ink-soft">
-            Мы отправили письмо на указанный email. Подтвердите адрес, затем
-            войдите в аккаунт.
-          </p>
-          <Button
-            className="mt-6 w-full"
-            variant="primary"
-            onClick={() => router.push("/login")}
-          >
-            Перейти ко входу
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="relative flex min-h-[70vh] items-center justify-center overflow-hidden">

@@ -29,9 +29,9 @@ export function PackCard({
     <>
       <button
         onClick={() => setOpen(true)}
-        className="panel group relative flex flex-col overflow-hidden text-left transition-all duration-150 hover:border-brand/40 hover:shadow-glow"
+        className="panel group relative flex flex-col overflow-hidden text-left card-lift hover:border-brand/40 hover:shadow-glow"
       >
-        <div className="relative flex h-36 items-center justify-center overflow-hidden">
+        <div className="animate-shimmer relative flex h-36 items-center justify-center overflow-hidden">
           {pack.image_url ? (
             <img src={pack.image_url} alt={pack.name} className="h-full w-full object-cover" />
           ) : (
@@ -149,7 +149,7 @@ function PackOpenModal({
       }
     >
       {result ? (
-        <div className="flex flex-col items-center gap-3 py-4">
+        <div className="animate-pop-in flex flex-col items-center gap-3 py-4">
           <ChipImage name={result.name} rarity={result.rarity} size={132} />
           <p className="font-display text-base font-bold text-ink">{result.name}</p>
           <RarityBadge slug={result.rarity} name={result.rarity} />

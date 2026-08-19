@@ -86,7 +86,7 @@ export function ProfileView({ data }: { data: ProfileData }) {
   return (
     <div className="grid gap-6 lg:grid-cols-3">
       <div className="flex flex-col gap-4 lg:col-span-2">
-        <Panel className="relative overflow-hidden p-5">
+        <Panel className="animate-fade-up relative overflow-hidden p-5">
           <div
             className="pointer-events-none absolute inset-0"
             style={{
@@ -147,22 +147,10 @@ export function ProfileView({ data }: { data: ProfileData }) {
             </div>
           </div>
 
-          <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="mt-5 grid grid-cols-2 gap-3">
             {[
               { label: "Фишек в инвентаре", value: fmtNumber(data.itemsCount) },
               { label: "Активных листингов", value: fmtNumber(data.listingsCount) },
-              {
-                label: "Лучший предмет",
-                value: data.bestChip
-                  ? `${fmtNumber(Math.round(data.bestChip.base_price))} ₽`
-                  : "—",
-              },
-              {
-                label: "Лучший дроп",
-                value: data.bestDrop
-                  ? `${fmtNumber(Math.round(data.bestDrop.base_price))} ₽`
-                  : "—",
-              },
             ].map((s) => (
               <div key={s.label} className="rounded-lg border border-panel-border bg-canvas-inset px-3 py-2.5">
                 <p className="text-[11px] text-ink-faint">{s.label}</p>
@@ -172,9 +160,9 @@ export function ProfileView({ data }: { data: ProfileData }) {
           </div>
         </Panel>
 
-        <Panel className="p-5">
-          <h2 className="mb-3 font-display text-sm font-bold text-ink">Лучший дроп</h2>
-          {data.bestDrop ? (
+        {data.bestDrop && (
+          <Panel className="animate-fade-up p-5" style={{ animationDelay: "80ms" }}>
+            <h2 className="mb-3 font-display text-sm font-bold text-ink">Лучший дроп</h2>
             <div className="flex items-center gap-4">
               <ChipImage
                 name={data.bestDrop.name}
@@ -191,16 +179,12 @@ export function ProfileView({ data }: { data: ProfileData }) {
                 </p>
               </div>
             </div>
-          ) : (
-            <p className="text-[13px] text-ink-faint">
-              Откройте паки или купите фишки — лучший дроп появится здесь
-            </p>
-          )}
-        </Panel>
+          </Panel>
+        )}
 
-        <Panel className="p-5">
-          <h2 className="mb-3 font-display text-sm font-bold text-ink">Лучший предмет в инвентаре</h2>
-          {data.bestChip ? (
+        {data.bestChip && (
+          <Panel className="animate-fade-up p-5" style={{ animationDelay: "120ms" }}>
+            <h2 className="mb-3 font-display text-sm font-bold text-ink">Лучший предмет в инвентаре</h2>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-[15px] font-semibold text-ink">{data.bestChip.name}</p>
@@ -210,14 +194,12 @@ export function ProfileView({ data }: { data: ProfileData }) {
                 {fmtNumber(Math.round(data.bestChip.base_price))} ₽
               </p>
             </div>
-          ) : (
-            <p className="text-[13px] text-ink-faint">Инвентарь пуст</p>
-          )}
-        </Panel>
+          </Panel>
+        )}
       </div>
 
       <div className="flex flex-col gap-4">
-        <Panel className="p-5">
+        <Panel className="animate-fade-up p-5" style={{ animationDelay: "40ms" }}>
           <h3 className="mb-2 font-display text-sm font-bold text-ink">Быстрые действия</h3>
           <div className="flex flex-col gap-2">
             <Button variant="primary" size="sm" onClick={() => setBalanceOpen(true)}>
@@ -248,7 +230,7 @@ export function ProfileView({ data }: { data: ProfileData }) {
           </div>
         </Panel>
 
-        <Panel className="p-5">
+        <Panel className="animate-fade-up p-5" style={{ animationDelay: "80ms" }}>
           <h3 className="mb-2 font-display text-sm font-bold text-ink">Настройки</h3>
           <div className="flex flex-col gap-2">
             <button
@@ -282,17 +264,6 @@ export function ProfileView({ data }: { data: ProfileData }) {
               Выйти
             </Button>
           </div>
-        </Panel>
-
-        <Panel className={cn("p-5", "bg-canvas-elevated/50")}>
-          <h3 className="mb-2 font-display text-sm font-bold text-ink">ID аккаунта</h3>
-          <p className="mb-3 text-[12px] leading-relaxed text-ink-faint">
-            Нужен для пополнения баланса вручную (администратор использует его
-            для зачисления средств).
-          </p>
-          <code className="block rounded-lg border border-panel-border bg-canvas-inset px-3 py-2 font-mono text-[12px] text-brand">
-            {fmtAccountId(data.accountId)}
-          </code>
         </Panel>
       </div>
 

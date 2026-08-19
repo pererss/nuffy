@@ -92,13 +92,15 @@ export default async function ChipPage({
                   "radial-gradient(circle at 50% 38%, rgb(var(--brand) / 0.16), rgb(var(--base-inset)) 68%)",
               }}
             >
-              <ChipImage
-                name={chip.name}
-                imageUrl={chip.image_url}
-                crop={chip.image_crop}
-                rarity={chip.rarity.slug}
-                size={220}
-              />
+              <div className="animate-pop-in">
+                <ChipImage
+                  name={chip.name}
+                  imageUrl={chip.image_url}
+                  crop={chip.image_crop}
+                  rarity={chip.rarity.slug}
+                  size={220}
+                />
+              </div>
             </div>
             <div className="text-center">
               <h1 className="font-display text-lg font-bold text-ink">
