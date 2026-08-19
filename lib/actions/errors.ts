@@ -15,7 +15,7 @@ export function translateDbError(message: string | undefined | null): string {
   if (m.includes("collection_not_available")) return "Коллекция недоступна";
   if (m.includes("collection_sold_out")) return "Коллекция распродана";
   if (m.includes("sale_not_allowed:lock"))
-    return "Продажа недоступна: фишка заблокирована (7 дней с момента получения)";
+    return "Продажа недоступна: фишка заблокирована (срок lock ещё не истёк)";
   if (m.includes("sale_not_allowed:collection_not_sold_out"))
     return "Продажа недоступна: коллекция ещё не распродана";
   if (m.includes("sale_not_allowed:already_listed"))
@@ -57,6 +57,11 @@ export function translateDbError(message: string | undefined | null): string {
   if (m.includes("promo_claimed")) return "Вы уже использовали этот промокод";
   if (m.includes("promo_zero")) return "Бонус промокода равен нулю";
   if (m.includes("forbidden")) return "Недостаточно прав";
+  if (m.includes("feature_disabled:shop")) return "Магазин временно отключён";
+  if (m.includes("feature_disabled:marketplace")) return "Торговая площадка временно отключена";
+  if (m.includes("feature_disabled:trades")) return "Обмены временно отключены";
+  if (m.includes("feature_disabled:upgrades")) return "Апгрейды временно отключены";
+  if (m.includes("feature_disabled")) return "Функция временно отключена";
   if (m.includes("tiers_empty")) return "Конфигурация пака: тиры не заданы";
   if (m.includes("tiers_sum_not_100"))
     return "Сумма вероятностей тиров не равна 100%";

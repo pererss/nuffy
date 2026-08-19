@@ -36,7 +36,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     (message: string, type: ToastType = "info") => {
       const id = ++toastId;
       setToasts((t) => [...t, { id, type, message }]);
-      play(type === "success" ? "success" : type === "error" ? "error" : "click");
+      if (type === "error" || type === "warning") play(type === "error" ? "error" : "error");
       setTimeout(() => {
         setToasts((t) => t.filter((x) => x.id !== id));
       }, 4500);

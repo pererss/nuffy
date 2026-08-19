@@ -28,15 +28,25 @@ SUPABASE_SERVICE_ROLE_KEY=            # ← пусто, заполнить!
 
 > **Важно:** `SUPABASE_SERVICE_ROLE_KEY` — секрет. Он используется только на сервере (Next.js) и никогда не попадает в браузер. `.env.local` в git не коммитится. Без него сайт работает, но `/admin` покажет «Админ-панель отключена».
 
+**Google OAuth (опционально, по умолчанию выключен):** включите провайдера Google в Dashboard → Authentication → Providers → Google (Client ID/Secret из Google Cloud Console, Redirect URL: `https://<ref>.supabase.co/auth/v1/callback`) и добавьте в `.env.local`:
+
+```ini
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_GOOGLE_OAUTH=true
+```
+
+Пока `NEXT_PUBLIC_GOOGLE_OAUTH` не установлен, кнопка «Войти через Google» на странице входа неактивна и ничего не ломает.
+
 После изменения ключей ОБЯЗАТЕЛЬНО перезапустите `npm run dev`.
 
 ---
 
 ## 3. Создание таблиц — ОДНА миграция
 
-Всё необходимое находится в **одном файле**:
+Всё необходимое находится в **двух файлах**:
 
 - `supabase/migrations/005_full_setup.sql` — схема + функции + RLS + Storage + демо-данные; безопасен для повторного запуска (демо-данные применятся только один раз)
+- `supabase/migrations/006_system_settings.sql` — системные настройки: настраиваемый lock-период продажи и фиче-флаги (магазин/площадка/обмены/апгрейды). Применяется поверх `005`.
 
 Файлы `001_schema.sql` – `004_seed.sql` — только история/справочник, **выполнять их не нужно**, они уже внутри `005`.
 
@@ -46,6 +56,7 @@ SUPABASE_SERVICE_ROLE_KEY=            # ← пусто, заполнить!
 2. Откройте файл `supabase/migrations/005_full_setup.sql`, вставьте его содержимое целиком в редактор
 3. **Run** (или Ctrl+Enter)
 4. Внизу должны появиться числа проверки (`rarities` = 5, `chips` = 33, `pack_versions` = 2, `seed_applied` = 1)
+5. Повторите шаги 2–3 с файлом `006_system_settings.sql` (вывод: `INSERT 0 1` и сообщения про функции)
 
 ### Способ Б — Supabase CLI
 
@@ -115,6 +126,12 @@ where email = 'demo@nuffy.app';   -- или ваш email после регист
 - [ ] `/admin/collections`, `/admin/chips`, `/admin/packs`, `/admin/promocodes` — CRUD, загрузка картинок
 - [ ] `/admin/transactions` — подтверждение пополнений
 - [ ] `/admin/marketplace` — отмена лотов
+- [ ] `/admin/settings` — lock-период продажи, комиссия площадки, множитель апгрейда, фиче-флаги (применяются мгновенно)
+
+Звук и внешний вид:
+- [ ] Звуки кликов/покупок/паков/ошибок; отключение — Профиль → Настройки → «Звуковые эффекты»
+- [ ] Светлая/тёмная тема, ретро-шрифты (Unbounded/JetBrains Mono/Manrope)
+- [ ] Инвентарь: переключатель «Список/Карточки»
 
 ---
 
@@ -148,6 +165,9 @@ npm run start     # проверить prod-сборку локально
 
 **`relation "chips" does not exist` / `could not find the function public.buy_chip`**
 → Миграции не применены. Выполните `005_full_setup.sql` целиком (см. шаг 3); внизу должны появиться числа проверки.
+
+**Фичи «магазин/обмены» отключены / lock не 7 дней**
+→ Проверьте `/admin/settings` → «Система». Если миграция `006_system_settings.sql` не применена — функции `system_flag`/`sell_lock_days` отсутствуют (ошибка `function public.system_flag does not exist`). Выполните `006` из SQL-редактора.
 
 **`permission denied for function/table` (RLS)**
 → Не применена часть RLS из `005_full_setup.sql` (или миграции делались до добавления политик). Перезапустите `005_full_setup.sql` целиком — он идемпотентен.

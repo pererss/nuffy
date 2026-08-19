@@ -517,8 +517,7 @@ export async function adminUpdateSettings(
   for (const row of rows) {
     const { error } = await admin
       .from("settings")
-      .upsert({ key: row.key, value: row.value, updated_at: new Date().toISOString() })
-      .eq("key", row.key);
+      .upsert({ key: row.key, value: row.value, updated_at: new Date().toISOString() }, { onConflict: "key" });
     if (error) return { ok: false, error: translateDbError(error.message) };
   }
 

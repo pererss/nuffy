@@ -73,6 +73,7 @@ export function ProfileView({ data }: { data: ProfileData }) {
     });
     setSaving(false);
     if (res.ok) {
+      play("success");
       toast("Имя сохранено", "success");
       setEditing(false);
       router.refresh();

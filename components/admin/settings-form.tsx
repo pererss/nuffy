@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Panel, PanelHeader } from "@/components/ui/misc";
 import { Field, Input } from "@/components/ui/form";
 import { useToast } from "@/components/ui/toast";
+import { useSound } from "@/components/sound";
 import { adminUpdateSettings } from "@/lib/actions/admin";
 import { cn } from "@/lib/utils";
 
@@ -56,6 +57,7 @@ function FlagSwitch({
 
 export function SettingsForm({ initial }: { initial: SettingsFormData }) {
   const { toast } = useToast();
+  const { play } = useSound();
   const [form, setForm] = useState<SettingsFormData>(initial);
   const [saving, setSaving] = useState(false);
 
@@ -67,6 +69,7 @@ export function SettingsForm({ initial }: { initial: SettingsFormData }) {
     const res = await adminUpdateSettings(form.system, form.marketplace, form.economy);
     setSaving(false);
     if (res.ok) {
+      play("success");
       toast("Настройки сохранены", "success");
     } else {
       toast(res.error ?? "Ошибка", "error");
