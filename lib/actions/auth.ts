@@ -36,6 +36,24 @@ export async function signOut(): Promise<void> {
   await sb.auth.signOut();
 }
 
+/**
+ * Google OAuth: включите провайдера в Supabase Dashboard (Authentication →
+ * Providers → Google) и установите NEXT_PUBLIC_GOOGLE_OAUTH=true в .env.local.
+ * Пока флаг не установлен, кнопка входа не показывается.
+ */
+export async function signInWithGoogle(): Promise<Result<{ url: string }>> {
+  if (process.env.NEXT_PUBLIC_GOOGLE_OAUTH !== "true") {
+    return { ok: false, error: "Google OAuth не включён" };
+  }
+  const sb = await createSupabase();
+  const { data, error } = await sb.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/api/auth/callback` },
+  });
+  if (error) return { ok: false, error: translateDbError(error.message) };
+  return { ok: true, data: { url: data.url } };
+}
+
 export async function requireUser() {
   const sb = await createSupabase();
   const {

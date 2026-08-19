@@ -11,6 +11,8 @@ import {
   X,
   Copy,
   Check,
+  Grid2X2,
+  Rows3,
 } from "lucide-react";
 import { ChipImage } from "@/components/chips/chip-image";
 import { RarityBadge, LevelBadge, LockBadge, StatusPill } from "@/components/ui/badge";
@@ -49,6 +51,7 @@ export function InventoryView({
   const [collection, setCollection] = useState("");
   const [sort, setSort] = useState("new");
   const [group, setGroup] = useState(false);
+  const [compact, setCompact] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [tradeOpen, setTradeOpen] = useState(false);
   const [upgradeOpen, setUpgradeOpen] = useState(false);
@@ -101,6 +104,90 @@ export function InventoryView({
   };
 
   const selectableIds = filtered.filter((i) => i.status === "owned").map((i) => i.id);
+
+  const renderCompactItem = (i: InventoryRow) => {
+    const lock = lockInfo(i.locked_until);
+    const sell = sellCheck(i);
+    return (
+      <div
+        key={i.id}
+        className={cn(
+          "panel flex items-center gap-3 px-3 py-2 transition-all duration-150",
+          selected.has(i.id) && "border-brand/50 shadow-glow"
+        )}
+      >
+        <button
+          onClick={() => toggle(i.id)}
+          className={cn(
+            "flex h-5 w-5 shrink-0 items-center justify-center rounded border transition-colors",
+            selected.has(i.id)
+              ? "border-brand bg-brand text-black"
+              : "border-panel-strong bg-canvas-inset"
+          )}
+        >
+          {selected.has(i.id) && (
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+              <path d="M5 13l4 4L19 7" stroke="black" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          )}
+        </button>
+        <ChipImage
+          name={i.chip_name}
+          imageUrl={i.image_url}
+          crop={i.image_crop}
+          rarity={i.rarity_slug}
+          size={40}
+        />
+        <Link
+          href={`/chips/${i.chip_id}`}
+          className="flex min-w-0 flex-1 flex-col gap-0.5"
+        >
+          <span className="truncate text-[13px] font-semibold text-ink">{i.chip_name}</span>
+          <span className="text-[11px] text-ink-faint">
+            №{i.chip_number} · Экз. №{i.serial}
+          </span>
+        </Link>
+        <div className="hidden items-center gap-1.5 md:flex">
+          <RarityBadge slug={i.rarity_slug} name={i.rarity_name} />
+          <LevelBadge level={i.level_name.replace("Level ", "L")} />
+        </div>
+        <LockBadge locked={lock.locked} />
+        {i.status === "listed" && <StatusPill tone="info">ЛИСТИНГ</StatusPill>}
+        <span className="tabular shrink-0 text-[13px] font-bold text-ink">
+          {fmtPrice(i.base_price)}
+        </span>
+        <div className="flex shrink-0 items-center gap-1.5">
+          <Link
+            href={`/chips/${i.chip_id}`}
+            className="flex h-7 w-7 items-center justify-center rounded-lg text-ink-faint transition-colors hover:bg-panel-hover hover:text-ink"
+            title="Открыть"
+          >
+            <ArrowUpRight className="h-3.5 w-3.5" />
+          </Link>
+          {i.status === "owned" && (
+            <SellChipModal
+              instanceId={i.id}
+              chipName={i.chip_name}
+              locked={lock.locked}
+              remainingText={lock.remainingText}
+              collectionSoldOut={i.collection_status === "sold_out"}
+              listed={false}
+              trigger={(open) => (
+                <button
+                  onClick={open}
+                  disabled={!sell.allowed}
+                  className="flex h-7 items-center rounded-lg bg-ok/10 px-2 text-[11px] font-bold text-ok transition-colors hover:bg-ok/20 disabled:pointer-events-none disabled:opacity-40"
+                  title={sell.allowed ? "Продать" : sell.reason === "lock" ? `Lock: ${lock.remainingText}` : "Коллекция не распродана"}
+                >
+                  SELL
+                </button>
+              )}
+            />
+          )}
+        </div>
+      </div>
+    );
+  };
 
   const renderItem = (i: InventoryRow) => {
     const lock = lockInfo(i.locked_until);
@@ -243,6 +330,17 @@ export function InventoryView({
             <Layers className="h-4 w-4" />
             Группировка
           </button>
+          <button
+            onClick={() => setCompact((v) => !v)}
+            className={cn(
+              "flex h-10 items-center gap-2 rounded-lg border px-3 text-[13px] font-medium transition-colors",
+              compact ? "border-brand/50 text-brand" : "border-panel-border text-ink-soft hover:border-panel-strong"
+            )}
+            title={compact ? "Показать карточками" : "Показать списком"}
+          >
+            {compact ? <Grid2X2 className="h-4 w-4" /> : <Rows3 className="h-4 w-4" />}
+            {compact ? "Карточки" : "Список"}
+          </button>
           <Link
             href="/trades"
             className="flex h-10 items-center gap-2 rounded-lg border border-panel-border px-3 text-[13px] font-medium text-ink-soft transition-colors hover:border-brand/40 hover:text-brand"
@@ -295,12 +393,18 @@ export function InventoryView({
               <h2 className="mb-3 font-display text-[13px] font-bold uppercase tracking-wider text-ink-faint">
                 {name} · {list.length}
               </h2>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                {list.map(renderItem)}
-              </div>
+              {compact ? (
+                <div className="flex flex-col gap-2">{list.map(renderCompactItem)}</div>
+              ) : (
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                  {list.map(renderItem)}
+                </div>
+              )}
             </section>
           ))}
         </div>
+      ) : compact ? (
+        <div className="flex flex-col gap-2">{filtered.map(renderCompactItem)}</div>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {filtered.map(renderItem)}

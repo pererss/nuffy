@@ -2,13 +2,16 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Copy, Check, Pencil, RotateCcw } from "lucide-react";
+import { Copy, Check, Pencil, RotateCcw, Wallet, Shield, LogOut, Volume2, VolumeX } from "lucide-react";
 import { ChipImage } from "@/components/chips/chip-image";
 import { RarityBadge } from "@/components/ui/badge";
 import { Button, IconButton } from "@/components/ui/button";
 import { Panel } from "@/components/ui/misc";
 import { Input } from "@/components/ui/form";
 import { useToast } from "@/components/ui/toast";
+import { useSound } from "@/components/sound";
+import { BalanceModal } from "@/components/profile/balance-modal";
+import { signOut } from "@/lib/actions/auth";
 import { fmtAccountId, fmtDate, fmtNumber, cn } from "@/lib/utils";
 
 export type ProfileData = {
@@ -16,6 +19,7 @@ export type ProfileData = {
   accountId: string;
   balance: number;
   createdAt: string;
+  isAdmin: boolean;
   itemsCount: number;
   listingsCount: number;
   bestChip: {
@@ -35,11 +39,21 @@ export type ProfileData = {
 export function ProfileView({ data }: { data: ProfileData }) {
   const router = useRouter();
   const { toast } = useToast();
+  const { enabled: soundOn, toggle: toggleSound, play } = useSound();
 
   const [editing, setEditing] = useState(false);
   const [username, setUsername] = useState(data.username);
   const [saving, setSaving] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [balanceOpen, setBalanceOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
+
+  const doSignOut = async () => {
+    setSigningOut(true);
+    await signOut();
+    router.push("/");
+    router.refresh();
+  };
 
   const saveUsername = async () => {
     const clean = username.trim();
@@ -205,6 +219,10 @@ export function ProfileView({ data }: { data: ProfileData }) {
         <Panel className="p-5">
           <h3 className="mb-2 font-display text-sm font-bold text-ink">Быстрые действия</h3>
           <div className="flex flex-col gap-2">
+            <Button variant="primary" size="sm" onClick={() => setBalanceOpen(true)}>
+              <Wallet className="h-3.5 w-3.5" />
+              Баланс и промокоды
+            </Button>
             <Button
               variant="secondary"
               size="sm"
@@ -228,6 +246,43 @@ export function ProfileView({ data }: { data: ProfileData }) {
             </Button>
           </div>
         </Panel>
+
+        <Panel className="p-5">
+          <h3 className="mb-2 font-display text-sm font-bold text-ink">Настройки</h3>
+          <div className="flex flex-col gap-2">
+            <button
+              onClick={() => {
+                toggleSound();
+                if (soundOn) play("click");
+              }}
+              className="flex items-center justify-between rounded-lg border border-panel-border px-3 py-2.5 transition-colors hover:border-panel-strong"
+            >
+              <span className="flex items-center gap-2 text-[13px] font-medium text-ink">
+                {soundOn ? <Volume2 className="h-4 w-4 text-brand" /> : <VolumeX className="h-4 w-4 text-ink-dim" />}
+                Звуковые эффекты
+              </span>
+              <span
+                className={cn(
+                  "flex h-5 w-9 items-center rounded-full border px-0.5 transition-colors",
+                  soundOn ? "justify-end border-brand bg-brand/20" : "justify-start border-panel-strong bg-canvas-inset"
+                )}
+              >
+                <span className={cn("h-4 w-4 rounded-full transition-colors", soundOn ? "bg-brand" : "bg-ink-dim")} />
+              </span>
+            </button>
+            {data.isAdmin && (
+              <Button variant="secondary" size="sm" onClick={() => router.push("/admin")}>
+                <Shield className="h-3.5 w-3.5" />
+                Админ-панель
+              </Button>
+            )}
+            <Button variant="ghost" size="sm" loading={signingOut} onClick={doSignOut} className="text-danger hover:bg-danger/10">
+              <LogOut className="h-3.5 w-3.5" />
+              Выйти
+            </Button>
+          </div>
+        </Panel>
+
         <Panel className={cn("p-5", "bg-canvas-elevated/50")}>
           <h3 className="mb-2 font-display text-sm font-bold text-ink">ID аккаунта</h3>
           <p className="mb-3 text-[12px] leading-relaxed text-ink-faint">
@@ -239,6 +294,8 @@ export function ProfileView({ data }: { data: ProfileData }) {
           </code>
         </Panel>
       </div>
+
+      {balanceOpen && <BalanceModal open onClose={() => setBalanceOpen(false)} />}
     </div>
   );
 }

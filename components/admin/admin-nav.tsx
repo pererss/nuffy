@@ -13,6 +13,7 @@ import {
   Ticket,
   Ban,
   ScrollText,
+  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -27,6 +28,7 @@ const items = [
   { href: "/admin/promocodes", label: "Промокоды", icon: Ticket },
   { href: "/admin/blocks", label: "Блокировки", icon: Ban },
   { href: "/admin/audit", label: "Аудит", icon: ScrollText },
+  { href: "/admin/settings", label: "Настройки", icon: Settings },
 ];
 
 export function AdminNav() {

@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/form";
 import { useToast } from "@/components/ui/toast";
-import { signIn } from "@/lib/actions/auth";
+import { signIn, signInWithGoogle } from "@/lib/actions/auth";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,6 +14,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,6 +25,17 @@ export default function LoginPage() {
       router.push("/shop");
       router.refresh();
     } else {
+      toast(res.error, "error");
+    }
+  };
+
+  const google = async () => {
+    setGoogleLoading(true);
+    const res = await signInWithGoogle();
+    setGoogleLoading(false);
+    if (res.ok && res.data?.url) {
+      window.location.href = res.data.url;
+    } else if (!res.ok && res.error !== "Google OAuth не включён") {
       toast(res.error, "error");
     }
   };
@@ -89,6 +101,21 @@ export default function LoginPage() {
             Войти
           </Button>
         </form>
+        <div className="my-5 flex items-center gap-3">
+          <span className="h-px flex-1 bg-panel-border" />
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-dim">или</span>
+          <span className="h-px flex-1 bg-panel-border" />
+        </div>
+        <Button
+          type="button"
+          variant="secondary"
+          size="md"
+          loading={googleLoading}
+          onClick={google}
+          className="w-full"
+        >
+          Войти через Google
+        </Button>
         <p className="mt-5 text-center text-[13px] text-ink-faint">
           Нет аккаунта?{" "}
           <Link href="/register" className="text-brand hover:text-brand-hover">

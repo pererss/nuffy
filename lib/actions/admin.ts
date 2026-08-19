@@ -474,6 +474,62 @@ export async function adminUploadImage(
   return { ok: true, data: { url: data.publicUrl } };
 }
 
+// ---------------- settings ----------------
+
+export async function adminUpdateSettings(
+  system: {
+    sell_lock_days: number;
+    shop_enabled: boolean;
+    marketplace_enabled: boolean;
+    trades_enabled: boolean;
+    upgrades_enabled: boolean;
+  },
+  marketplace: { fee_percent: number },
+  economy: { upgrade_source_multiplier: number }
+): Promise<Result> {
+  const { admin, adminId } = await getAdmin();
+
+  const lockDays = Math.max(0, Math.min(30, Math.round(system.sell_lock_days)));
+  const fee = Math.max(0, Math.min(100, Number(marketplace.fee_percent) || 0));
+  const multiplier = Math.max(0, Math.min(1, Number(economy.upgrade_source_multiplier) || 0));
+
+  const { data: oldSystem } = await admin
+    .from("settings")
+    .select("value")
+    .eq("key", "system")
+    .single();
+
+  const rows = [
+    {
+      key: "system",
+      value: {
+        sell_lock_days: lockDays,
+        shop_enabled: Boolean(system.shop_enabled),
+        marketplace_enabled: Boolean(system.marketplace_enabled),
+        trades_enabled: Boolean(system.trades_enabled),
+        upgrades_enabled: Boolean(system.upgrades_enabled),
+      },
+    },
+    { key: "marketplace", value: { fee_percent: fee } },
+    { key: "economy", value: { upgrade_source_multiplier: multiplier } },
+  ];
+
+  for (const row of rows) {
+    const { error } = await admin
+      .from("settings")
+      .upsert({ key: row.key, value: row.value, updated_at: new Date().toISOString() })
+      .eq("key", row.key);
+    if (error) return { ok: false, error: translateDbError(error.message) };
+  }
+
+  await logAudit(admin, adminId, "update_settings", "settings", "system", oldSystem ?? null, {
+    system: rows[0].value,
+    marketplace: rows[1].value,
+    economy: rows[2].value,
+  });
+  return { ok: true };
+}
+
 // ---------------- audit listing ----------------
 
 export async function adminListAudit(): Promise<{

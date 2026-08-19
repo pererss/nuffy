@@ -16,7 +16,7 @@ export default async function ProfilePage() {
   const [profile, stats, bestDrop] = await Promise.all([
     sb
       .from("profiles")
-      .select("id, username, account_id, balance, created_at")
+      .select("id, username, account_id, balance, role, created_at")
       .eq("id", user.id)
       .single(),
     getUserStats(user.id),
@@ -29,6 +29,7 @@ export default async function ProfilePage() {
     accountId: String(profile.data.account_id ?? ""),
     balance: profile.data.balance ?? 0,
     createdAt: profile.data.created_at ?? user.created_at ?? new Date().toISOString(),
+    isAdmin: profile.data.role === "admin",
     itemsCount: stats?.itemsCount ?? 0,
     listingsCount: stats?.listingsCount ?? 0,
     bestChip: stats?.bestChip ?? null,

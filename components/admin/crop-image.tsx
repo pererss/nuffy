@@ -1,12 +1,14 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ImagePlus, Upload, ZoomIn } from "lucide-react";
+import { ImagePlus, Upload, ZoomIn, RotateCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { adminUploadImage } from "@/lib/actions/admin";
 
 export type CropData = { x: number; y: number; zoom: number };
+
+const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/webp"];
 
 async function fileToDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -50,6 +52,7 @@ export function CropImage({
   const [natural, setNatural] = useState({ w: 1, h: 1 });
   const [state, setState] = useState({ sx: 0, sy: 0 });
   const [zoom, setZoom] = useState(initialCrop?.zoom ?? 1);
+  const [rotate, setRotate] = useState(0);
   const [uploading, setUploading] = useState(false);
   const [loadingImg, setLoadingImg] = useState(false);
 
@@ -57,12 +60,12 @@ export function CropImage({
 
   const pick = async (f: File | undefined) => {
     if (!f) return;
-    if (!f.type.startsWith("image/")) {
-      toast("Нужен файл изображения", "error");
+    if (!ALLOWED_TYPES.includes(f.type)) {
+      toast("Формат: PNG, JPG или WEBP", "error");
       return;
     }
-    if (f.size > 8 * 1024 * 1024) {
-      toast("Файл слишком большой (макс. 8 МБ)", "error");
+    if (f.size > 1024 * 1024) {
+      toast("Файл слишком большой (макс. 1 МБ)", "error");
       return;
     }
     try {
@@ -71,6 +74,7 @@ export function CropImage({
       setNatural({ w: img.naturalWidth, h: img.naturalHeight });
       setState({ sx: 0, sy: 0 });
       setZoom(Math.min(4, Math.max(1, 1)));
+      setRotate(0);
       setSrc(dataUrl);
       setLoadingImg(false);
     } catch {
@@ -128,7 +132,14 @@ export function CropImage({
       const ctx = canvas.getContext("2d");
       if (!ctx) throw new Error("no_ctx");
       ctx.imageSmoothingQuality = "high";
-      ctx.drawImage(img, state.sx, state.sy, vw, vh, 0, 0, 512, 512);
+      const rad = (rotate * Math.PI) / 180;
+      if (rad !== 0) {
+        ctx.translate(256, 256);
+        ctx.rotate(rad);
+        ctx.drawImage(img, state.sx, state.sy, vw, vh, -256, -256, 512, 512);
+      } else {
+        ctx.drawImage(img, state.sx, state.sy, vw, vh, 0, 0, 512, 512);
+      }
       const blob: Blob | null = await new Promise((res) =>
         canvas.toBlob(res, "image/png")
       );
@@ -154,7 +165,7 @@ export function CropImage({
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept="image/png,image/jpeg,image/webp"
         className="hidden"
         onChange={(e) => pick(e.target.files?.[0])}
       />
@@ -175,7 +186,7 @@ export function CropImage({
             className="absolute inset-0 h-full w-full object-cover"
             style={{
               objectPosition: `${extraX > 0 ? (state.sx / extraX) * 100 : 50}% ${extraY > 0 ? (state.sy / extraY) * 100 : 50}%`,
-              transform: `scale(${zoom})`,
+              transform: `scale(${zoom}) rotate(${rotate}deg)`,
               transformOrigin: "center",
             }}
             onDragStart={(e) => e.preventDefault()}
@@ -208,6 +219,17 @@ export function CropImage({
         <span className="w-10 text-right text-[11px] tabular text-ink-faint">
           {zoom.toFixed(2)}×
         </span>
+        <Button
+          variant="secondary"
+          size="sm"
+          disabled={!src}
+          onClick={() => setRotate((r) => (r + 90) % 360)}
+          title={`Повернуть (${rotate}°)`}
+          className="px-2.5"
+        >
+          <RotateCw className="h-3.5 w-3.5" />
+          <span className="text-[11px]">{rotate}°</span>
+        </Button>
       </div>
 
       <div className="flex w-[280px] gap-2">
@@ -222,6 +244,7 @@ export function CropImage({
           <img src={value} alt="current" className="h-9 w-9 rounded-lg border border-panel-border object-cover" />
         )}
       </div>
+      <p className="text-[11px] text-ink-faint">Форматы: PNG, JPG, WEBP · до 1 МБ</p>
       {loadingImg && <p className="text-[11px] text-ink-faint">Загрузка…</p>}
     </div>
   );
