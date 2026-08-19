@@ -15,6 +15,7 @@
 ```ini
 NEXT_PUBLIC_SUPABASE_URL=https://gnktrmjlpnrcfunegiik.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_f8aomMXZ1Qf1AImg6Bc91A_nrU7M8Ei
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_f8aomMXZ1Qf1AImg6Bc91A_nrU7M8Ei   # алиас нового названия
 SUPABASE_SERVICE_ROLE_KEY=            # ← пусто, заполнить!
 ```
 
