@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Vote } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
+import { useSound } from "@/components/sound";
 import { buyChip } from "@/lib/actions/shop";
 import { cn } from "@/lib/utils";
 
@@ -27,6 +28,7 @@ export function BuyChipButton({
 }) {
   const router = useRouter();
   const { toast } = useToast();
+  const { play } = useSound();
   const [loading, setLoading] = useState(false);
 
   const buy = async () => {
@@ -38,6 +40,7 @@ export function BuyChipButton({
     const res = await buyChip(chipId);
     setLoading(false);
     if (res.ok) {
+      play("purchase");
       toast("Фишка куплена и добавлена в инвентарь", "success");
       router.refresh();
     } else {

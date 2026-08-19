@@ -8,6 +8,7 @@ import { RarityBadge } from "@/components/ui/badge";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
+import { useSound } from "@/components/sound";
 import { openPack, type ChipActionResult } from "@/lib/actions/shop";
 import { fmtPrice } from "@/lib/utils";
 import type { Pack, PackItem, PackVersion } from "@/lib/types";
@@ -38,17 +39,18 @@ export function PackCard({
               className="absolute inset-0"
               style={{
                 background:
-                  "radial-gradient(circle at 30% 20%, rgb(var(--panel-hover)), rgb(var(--base-inset)) 70%)",
+                  "radial-gradient(circle at 30% 20%, rgb(var(--surface-hover)), rgb(var(--bg)) 70%)",
               }}
             >
               <span className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(240,185,59,0.12),transparent_60%)]" />
             </span>
           )}
-          <div className="absolute left-3 top-3 flex h-7 items-center gap-1.5 rounded-lg bg-black/60 px-2 backdrop-blur">
+          <span className="tech-label absolute left-3 top-2.5 text-ink-dim">PACK // {pack.name.slice(0, 12).toUpperCase()}</span>
+          <div className="absolute right-3 top-3 flex h-7 items-center gap-1.5 rounded-md bg-black/60 px-2 backdrop-blur">
             <Sparkles className="h-3.5 w-3.5 text-brand" />
-            <span className="text-[12px] font-bold text-ink">{fmtPrice(pack.price)}</span>
+            <span className="font-mono text-[12px] font-bold text-ink">{fmtPrice(pack.price)}</span>
           </div>
-          <span className="absolute bottom-3 left-3 rounded-md bg-black/60 px-1.5 py-0.5 text-[11px] font-medium text-ink-soft backdrop-blur">
+          <span className="absolute bottom-3 left-3 rounded-md bg-black/60 px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-ink-soft backdrop-blur">
             {pack.available_count !== null
               ? `Осталось: ${pack.available_count - pack.opened_count}`
               : "Без лимита"}
@@ -90,6 +92,7 @@ function PackOpenModal({
 }) {
   const router = useRouter();
   const { toast } = useToast();
+  const { play } = useSound();
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ChipActionResult | null>(null);
 
@@ -105,6 +108,7 @@ function PackOpenModal({
     const res = await openPack(pack.id);
     setLoading(false);
     if (res.ok) {
+      play("pack");
       setResult(res.data!);
     } else {
       toast(res.error, "error");

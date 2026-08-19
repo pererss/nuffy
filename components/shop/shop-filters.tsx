@@ -4,6 +4,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { Input, Select } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { Collection, Level, Rarity } from "@/lib/types";
 
@@ -100,21 +101,18 @@ export function ShopFilters({
         <button
           onClick={() => setFiltersOpen((v) => !v)}
           className={cn(
-            "flex h-10 items-center gap-2 rounded-lg border px-3 text-[13px] font-medium transition-colors",
+            "flex h-10 items-center gap-2 rounded-[7px] border px-3 text-[13px] font-medium transition-all",
             filtersOpen
-              ? "border-brand/50 text-brand"
-              : "border-panel-border text-ink-soft hover:border-panel-strong"
+              ? "border-brand/50 text-brand shadow-[0_2px_0_rgb(0_0_0_/_0.06)]"
+              : "border-panel-border text-ink-soft hover:border-panel-strong hover:text-ink"
           )}
         >
           <SlidersHorizontal className="h-4 w-4" />
           <span className="hidden sm:inline">Фильтры</span>
         </button>
-        <button
-          onClick={apply}
-          className="h-10 rounded-lg bg-brand px-4 text-[13px] font-semibold text-black transition-colors hover:bg-brand-hover"
-        >
+        <Button variant="primary" size="md" onClick={apply}>
           Найти
-        </button>
+        </Button>
       </div>
 
       {filtersOpen && (

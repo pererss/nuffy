@@ -2,22 +2,10 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
-import {
-  Wallet,
-  LogOut,
-  User as UserIcon,
-  RefreshCw,
-  Shield,
-  ChevronDown,
-} from "lucide-react";
+import { Wallet, ChevronDown } from "lucide-react";
 import { cn, fmtPrice } from "@/lib/utils";
-import { Popover, MenuItem } from "@/components/ui/dropdown";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme";
-import { useToast } from "@/components/ui/toast";
-import { BalanceModal } from "@/components/profile/balance-modal";
-import { signOut } from "@/lib/actions/auth";
 
 const tabs = [
   { href: "/shop", label: "Магазин" },
@@ -40,134 +28,85 @@ export function Header({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { toast } = useToast();
-  const [balanceOpen, setBalanceOpen] = useState(false);
 
   const active = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-panel-border bg-canvas-elevated/90 backdrop-blur">
-      <div className="mx-auto flex h-14 w-full max-w-[1200px] items-center gap-5 px-4 sm:px-6">
-        <Link
-          href="/shop"
-          className="font-display text-lg font-bold tracking-tight text-ink transition-colors hover:text-brand"
-        >
-          NUFFY
+    <header className="sticky top-0 z-40 border-b border-panel-border bg-canvas-elevated/92 backdrop-blur supports-[backdrop-filter]:bg-canvas-elevated/78">
+      <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-brand/55 to-transparent" />
+
+      <div className="mx-auto flex h-[52px] w-full max-w-[1280px] items-center gap-3 px-4 sm:px-6">
+        <Link href="/shop" className="group flex shrink-0 items-center gap-2.5 outline-none">
+          <span className="grid h-7 w-7 place-items-center rounded-[6px] bg-brand font-display text-[13px] font-black text-[#241803] shadow-[0_2px_0_rgb(120_84_14_/_0.35)] transition-transform group-hover:-translate-y-px">
+            N
+          </span>
+          <span className="font-display text-[15px] font-bold tracking-tight text-ink transition-colors group-hover:text-brand">
+            NUFFY
+          </span>
         </Link>
 
-        <nav className="hidden items-center gap-0.5 md:flex">
-          {tabs.map((t) => (
-            <Link
-              key={t.href}
-              href={t.href}
-              className={cn(
-                "rounded-lg px-3 py-1.5 text-[13px] font-medium transition-colors",
-                active(t.href)
-                  ? "bg-panel-hover text-ink"
-                  : "text-ink-faint hover:bg-panel-hover/60 hover:text-ink-soft"
-              )}
-            >
-              {t.label}
-            </Link>
-          ))}
+        <span className="tech-label hidden shrink-0 text-ink-dim lg:block">
+          // MARKET
+        </span>
+
+        <nav className="hidden flex-1 items-center justify-center gap-1 md:flex">
+          {tabs.map((t, i) => {
+            const isActive = active(t.href);
+            return (
+              <Link
+                key={t.href}
+                href={t.href}
+                className={cn(
+                  "group flex h-9 items-center gap-1.5 rounded-[7px] px-3 text-[13px] font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-brand/40",
+                  isActive
+                    ? "bg-surface text-ink shadow-[inset_0_0_0_1px_rgb(var(--border-strong)/0.7)]"
+                    : "text-ink-faint hover:bg-surface/60 hover:text-ink-soft"
+                )}
+              >
+                <span
+                  className={cn(
+                    "font-mono text-[9px] font-bold tracking-wider",
+                    isActive ? "text-brand" : "text-ink-dim"
+                  )}
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                {t.label}
+                <span
+                  className={cn(
+                    "ml-0.5 h-1.5 w-1.5 rounded-[2px] transition-colors",
+                    isActive ? "bg-brand" : "bg-transparent group-hover:bg-ink-dim"
+                  )}
+                />
+              </Link>
+            );
+          })}
         </nav>
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex shrink-0 items-center gap-2">
           <ThemeToggle />
 
           {user ? (
-            <>
-              <button
-                onClick={() => setBalanceOpen(true)}
-                className="flex h-9 items-center gap-2 rounded-lg border border-panel-border bg-panel px-3 text-sm font-semibold text-ink transition-colors hover:border-brand/40 hover:text-brand"
-                title="Пополнить / вывести"
-              >
-                <Wallet className="h-4 w-4 text-brand" />
-                <span className="tabular">{fmtPrice(user.balance)}</span>
-              </button>
-
-              <Popover
-                align="right"
-                width="w-60"
-                trigger={(open) => (
-                  <button
-                    className={cn(
-                      "flex h-9 items-center gap-2 rounded-lg border border-panel-border bg-panel px-2 transition-colors hover:border-panel-strong",
-                      open && "border-panel-strong"
-                    )}
-                  >
-                    <span className="flex h-6 w-6 items-center justify-center rounded-md bg-brand/15 text-[11px] font-bold text-brand">
-                      {user.username.slice(0, 1).toUpperCase()}
-                    </span>
-                    <span className="hidden text-[13px] font-medium text-ink sm:block">
-                      {user.username}
-                    </span>
-                    <ChevronDown className="h-3.5 w-3.5 text-ink-faint" />
-                  </button>
-                )}
-              >
-                {(close) => (
-                  <>
-                    <div className="px-2.5 py-2">
-                      <p className="text-[13px] font-semibold text-ink">
-                        {user.username}
-                      </p>
-                      <p className="text-[11px] text-ink-faint">
-                        ID: {user.accountId}
-                      </p>
-                    </div>
-                    <div className="my-1 h-px bg-panel-border" />
-                    <MenuItem
-                      icon={<UserIcon className="h-4 w-4" />}
-                      onClick={() => {
-                        close();
-                        router.push("/profile");
-                      }}
-                    >
-                      Профиль
-                    </MenuItem>
-                    <MenuItem
-                      icon={<RefreshCw className="h-4 w-4" />}
-                      onClick={() => {
-                        close();
-                        router.push("/trades");
-                      }}
-                    >
-                      Обмены
-                    </MenuItem>
-                    {user.isAdmin && (
-                      <>
-                        <div className="my-1 h-px bg-panel-border" />
-                        <MenuItem
-                          icon={<Shield className="h-4 w-4" />}
-                          onClick={() => {
-                            close();
-                            router.push("/admin/dashboard");
-                          }}
-                        >
-                          Админ-панель
-                        </MenuItem>
-                      </>
-                    )}
-                    <div className="my-1 h-px bg-panel-border" />
-                    <MenuItem
-                      danger
-                      icon={<LogOut className="h-4 w-4" />}
-                      onClick={async () => {
-                        close();
-                        await signOut();
-                        toast("Вы вышли из аккаунта", "info");
-                        router.push("/login");
-                        router.refresh();
-                      }}
-                    >
-                      Выйти
-                    </MenuItem>
-                  </>
-                )}
-              </Popover>
-            </>
+            <button
+              onClick={() => router.push("/profile")}
+              className="flex items-center gap-2.5 rounded-[7px] border border-panel-border bg-surface py-1.5 pl-2 pr-2.5 text-left transition-colors hover:border-brand/45 hover:shadow-[0_2px_0_rgb(0_0_0_/_0.06)]"
+              title="Открыть профиль"
+            >
+              <span className="grid h-7 w-7 place-items-center rounded-[6px] bg-brand/15 font-display text-[12px] font-bold text-brand">
+                {user.username.slice(0, 1).toUpperCase()}
+              </span>
+              <span className="flex flex-col items-start leading-tight">
+                <span className="max-w-[110px] truncate text-[12px] font-semibold text-ink">
+                  {user.username}
+                </span>
+                <span className="flex items-center gap-1 font-mono text-[11px] font-bold tabular text-brand">
+                  <Wallet className="h-3 w-3" />
+                  {fmtPrice(user.balance)}
+                </span>
+              </span>
+              <ChevronDown className="h-3.5 w-3.5 text-ink-faint" />
+            </button>
           ) : (
             <Link href="/login">
               <Button size="sm" variant="primary">
@@ -178,26 +117,33 @@ export function Header({
         </div>
       </div>
 
-      <nav className="flex items-center gap-1 overflow-x-auto border-t border-panel-border px-3 py-1.5 md:hidden">
-        {tabs.map((t) => (
-          <Link
-            key={t.href}
-            href={t.href}
-            className={cn(
-              "whitespace-nowrap rounded-lg px-3 py-1.5 text-[13px] font-medium transition-colors",
-              active(t.href)
-                ? "bg-panel-hover text-ink"
-                : "text-ink-faint hover:text-ink-soft"
-            )}
-          >
-            {t.label}
-          </Link>
-        ))}
+      <nav className="flex items-center gap-1 overflow-x-auto border-t border-panel-border bg-canvas-inset/40 px-3 py-1.5 md:hidden">
+        {tabs.map((t, i) => {
+          const isActive = active(t.href);
+          return (
+            <Link
+              key={t.href}
+              href={t.href}
+              className={cn(
+                "flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[7px] px-3 py-1.5 text-[13px] font-medium transition-colors",
+                isActive
+                  ? "bg-surface text-ink"
+                  : "text-ink-faint hover:bg-surface/60 hover:text-ink-soft"
+              )}
+            >
+              <span
+                className={cn(
+                  "font-mono text-[9px] font-bold",
+                  isActive ? "text-brand" : "text-ink-dim"
+                )}
+              >
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              {t.label}
+            </Link>
+          );
+        })}
       </nav>
-
-      {user && (
-        <BalanceModal open={balanceOpen} onClose={() => setBalanceOpen(false)} />
-      )}
     </header>
   );
 }

@@ -9,17 +9,22 @@ const links = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-panel-border bg-canvas-elevated">
-      <div className="mx-auto flex w-full max-w-[1200px] flex-col items-start justify-between gap-4 px-4 py-6 sm:flex-row sm:items-center sm:px-6">
+    <footer className="border-t border-panel-border bg-canvas-elevated/70">
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-brand/40 to-transparent" />
+      <div className="mx-auto flex w-full max-w-[1280px] flex-col items-start justify-between gap-4 px-4 py-6 sm:flex-row sm:items-center sm:px-6">
         <div>
-          <p className="font-display text-sm font-bold tracking-tight text-ink">
+          <p className="flex items-center gap-2 font-display text-sm font-bold tracking-tight text-ink">
+            <span className="inline-block h-2 w-2 rounded-[2px] bg-brand" />
             NUFFY
+          </p>
+          <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.18em] text-ink-dim">
+            marketplace коллекционных фишек
           </p>
           <a
             href="mailto:nuffysup@gmail.com"
-            className="mt-0.5 block text-[12px] text-ink-faint transition-colors hover:text-brand"
+            className="mt-1.5 block font-mono text-[11px] text-ink-faint transition-colors hover:text-brand"
           >
-            Поддержка: nuffysup@gmail.com
+            support: nuffysup@gmail.com
           </a>
         </div>
         <nav className="flex flex-wrap gap-x-5 gap-y-2">
@@ -27,7 +32,7 @@ export function Footer() {
             <Link
               key={l.href}
               href={l.href}
-              className="text-[12px] text-ink-faint transition-colors hover:text-ink-soft"
+              className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink-faint transition-colors hover:text-ink-soft"
             >
               {l.label}
             </Link>

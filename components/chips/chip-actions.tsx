@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { Field, Input } from "@/components/ui/form";
 import { useToast } from "@/components/ui/toast";
+import { useSound } from "@/components/sound";
 import { buyChip, toggleFavorite } from "@/lib/actions/shop";
 import { createListing, buyListing } from "@/lib/actions/marketplace";
 import { cn, fmtPrice } from "@/lib/utils";
@@ -59,6 +60,7 @@ export function BuyChipBig({
 }) {
   const router = useRouter();
   const { toast } = useToast();
+  const { play } = useSound();
   const [loading, setLoading] = useState(false);
 
   const buy = async () => {
@@ -66,6 +68,7 @@ export function BuyChipBig({
     const res = await buyChip(chipId);
     setLoading(false);
     if (res.ok) {
+      play("purchase");
       toast("Фишка добавлена в инвентарь", "success");
       router.refresh();
     } else {
@@ -108,6 +111,7 @@ export function SellChipModal({
 }) {
   const router = useRouter();
   const { toast } = useToast();
+  const { play } = useSound();
   const [open, setOpen] = useState(false);
   const [price, setPrice] = useState("");
   const [loading, setLoading] = useState(false);
@@ -122,6 +126,7 @@ export function SellChipModal({
     const res = await createListing(instanceId, value);
     setLoading(false);
     if (res.ok) {
+      play("listing");
       toast("Объявление создано", "success");
       setOpen(false);
       router.refresh();
@@ -203,6 +208,7 @@ export function BuyListingButton({
 }) {
   const router = useRouter();
   const { toast } = useToast();
+  const { play } = useSound();
   const [loading, setLoading] = useState(false);
   const [confirm, setConfirm] = useState(false);
 
@@ -219,6 +225,7 @@ export function BuyListingButton({
     const res = await buyListing(listingId);
     setLoading(false);
     if (res.ok) {
+      play("purchase");
       toast("Фишка куплена! Новый 7-дневный lock активирован", "success");
       router.refresh();
       setConfirm(false);

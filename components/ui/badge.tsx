@@ -28,7 +28,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex h-5 items-center gap-1.5 rounded-md px-1.5 text-[11px] font-semibold tracking-wide",
+        "inline-flex h-5 items-center gap-1.5 rounded-[5px] px-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.12em]",
         className
       )}
       style={
@@ -79,7 +79,7 @@ export function LevelBadge({ level, className }: { level: string; className?: st
   return (
     <span
       className={cn(
-        "inline-flex h-5 items-center rounded-md border border-panel-strong bg-canvas-inset px-1.5 text-[11px] font-semibold text-ink-soft",
+        "inline-flex h-5 items-center rounded-[5px] border border-panel-strong bg-canvas-inset px-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-ink-soft",
         className
       )}
     >
@@ -90,11 +90,11 @@ export function LevelBadge({ level, className }: { level: string; className?: st
 
 export function LockBadge({ locked }: { locked: boolean }) {
   return locked ? (
-    <span className="inline-flex h-5 items-center gap-1 rounded-md bg-warn/10 px-1.5 text-[11px] font-bold tracking-wider text-warn shadow-[inset_0_0_0_1px_rgba(240,135,91,0.35)]">
+    <span className="inline-flex h-5 items-center gap-1 rounded-[5px] bg-warn/10 px-1.5 font-mono text-[10px] font-bold tracking-[0.14em] text-warn shadow-[inset_0_0_0_1px_rgba(240,135,91,0.35)]">
       <Lock className="h-3 w-3" /> LOCKED
     </span>
   ) : (
-    <span className="inline-flex h-5 items-center gap-1 rounded-md bg-ok/10 px-1.5 text-[11px] font-bold tracking-wider text-ok shadow-[inset_0_0_0_1px_rgba(61,214,140,0.35)]">
+    <span className="inline-flex h-5 items-center gap-1 rounded-[5px] bg-ok/10 px-1.5 font-mono text-[10px] font-bold tracking-[0.14em] text-ok shadow-[inset_0_0_0_1px_rgba(61,214,140,0.35)]">
       <Check className="h-3 w-3" /> SELLABLE
     </span>
   );
@@ -119,7 +119,7 @@ export function StatusPill({
   return (
     <span
       className={cn(
-        "inline-flex h-5 items-center gap-1 rounded-md px-1.5 text-[11px] font-semibold",
+        "inline-flex h-5 items-center gap-1 rounded-[5px] px-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.12em]",
         tones[tone],
         className
       )}

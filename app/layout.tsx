@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { Manrope, Montserrat } from "next/font/google";
+import { Manrope, Unbounded, JetBrains_Mono } from "next/font/google";
 import { ToastProvider } from "@/components/ui/toast";
 import { ThemeProvider } from "@/components/theme";
+import { SoundProvider } from "@/components/sound";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { NotConfigured } from "@/components/layout/not-configured";
@@ -15,9 +16,15 @@ const manrope = Manrope({
   display: "swap",
 });
 
-const montserrat = Montserrat({
+const unbounded = Unbounded({
   subsets: ["latin", "cyrillic"],
   variable: "--font-display",
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin", "cyrillic"],
+  variable: "--font-mono",
   display: "swap",
 });
 
@@ -69,7 +76,7 @@ export default async function RootLayout({
   return (
     <html
       lang="ru"
-      className={`${manrope.variable} ${montserrat.variable}`}
+      className={`${manrope.variable} ${unbounded.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
       <head>
@@ -77,17 +84,21 @@ export default async function RootLayout({
       </head>
       <body className="flex min-h-screen flex-col">
         <ThemeProvider>
-          {configured ? (
-            <>
-              <Header user={user} />
-              <main className="mx-auto w-full max-w-[1200px] flex-1 px-4 pb-16 pt-6 sm:px-6">
-                {children}
-              </main>
-              <Footer />
-            </>
-          ) : (
-            <NotConfigured />
-          )}
+          <SoundProvider>
+            <ToastProvider>
+              {configured ? (
+                <>
+                  <Header user={user} />
+                  <main className="mx-auto w-full max-w-[1280px] flex-1 px-4 pb-16 pt-6 sm:px-6">
+                    {children}
+                  </main>
+                  <Footer />
+                </>
+              ) : (
+                <NotConfigured />
+              )}
+            </ToastProvider>
+          </SoundProvider>
         </ThemeProvider>
       </body>
     </html>

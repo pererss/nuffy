@@ -9,21 +9,21 @@ type Size = "sm" | "md" | "lg";
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-brand text-black hover:bg-brand-hover active:bg-brand/90 shadow-[0_1px_8px_rgba(240,185,59,0.25)] font-semibold",
+    "bg-brand text-[#241803] hover:bg-brand-hover font-bold border border-brand-deep/25 shadow-[0_2px_0_rgb(120_84_14_/_0.4)] active:translate-y-[1px] active:shadow-[0_1px_0_rgb(120_84_14_/_0.4)]",
   secondary:
-    "bg-panel-hover text-ink hover:bg-panel-strong border border-panel-border",
+    "bg-surface text-ink hover:bg-surface-hover border border-panel-strong shadow-[0_2px_0_rgb(0_0_0_/_0.08)] active:translate-y-[1px] active:shadow-none",
   ghost: "text-ink-soft hover:text-ink hover:bg-panel-hover",
   danger:
-    "bg-danger/10 text-danger border border-danger/30 hover:bg-danger/20",
-  ok: "bg-ok/10 text-ok border border-ok/30 hover:bg-ok/20",
+    "bg-danger/10 text-danger border border-danger/30 hover:bg-danger/20 shadow-[0_2px_0_rgb(213_80_76_/_0.25)] active:translate-y-[1px] active:shadow-none",
+  ok: "bg-ok/10 text-ok border border-ok/30 hover:bg-ok/20 shadow-[0_2px_0_rgb(47_155_110_/_0.25)] active:translate-y-[1px] active:shadow-none",
   outline:
-    "border border-panel-strong text-ink hover:border-brand/50 hover:text-brand",
+    "border border-panel-strong text-ink hover:border-brand/50 hover:text-brand bg-transparent shadow-[0_2px_0_rgb(0_0_0_/_0.06)] active:translate-y-[1px] active:shadow-none",
 };
 
 const sizes: Record<Size, string> = {
-  sm: "h-8 px-3 text-[13px] gap-1.5 rounded-lg",
-  md: "h-10 px-4 text-sm gap-2 rounded-lg",
-  lg: "h-11 px-6 text-[15px] gap-2 rounded-xl",
+  sm: "h-8 px-3 text-[13px] gap-1.5 rounded-[7px]",
+  md: "h-10 px-4 text-sm gap-2 rounded-[7px]",
+  lg: "h-11 px-6 text-[15px] gap-2 rounded-[9px]",
 };
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {

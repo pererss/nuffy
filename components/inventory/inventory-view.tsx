@@ -19,6 +19,7 @@ import { Modal } from "@/components/ui/modal";
 import { Input, Select, Field } from "@/components/ui/form";
 import { EmptyState } from "@/components/ui/misc";
 import { useToast } from "@/components/ui/toast";
+import { useSound } from "@/components/sound";
 import { SellChipModal } from "@/components/chips/chip-actions";
 import { createTrade } from "@/lib/actions/trades";
 import { upgradeChip } from "@/lib/actions/upgrades";
@@ -40,6 +41,7 @@ export function InventoryView({
 }) {
   const router = useRouter();
   const { toast } = useToast();
+  const { play } = useSound();
 
   const [q, setQ] = useState("");
   const [rarity, setRarity] = useState("");
@@ -352,6 +354,7 @@ function TradeOfferModal({
   onDone: () => void;
 }) {
   const { toast } = useToast();
+  const { play } = useSound();
   const [wantChipIds, setWantChipIds] = useState<string[]>([]);
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
@@ -377,6 +380,7 @@ function TradeOfferModal({
     );
     setLoading(false);
     if (res.ok) {
+      play("trade");
       setResult({ code: res.data!.code });
     } else {
       toast(res.error, "error");
@@ -500,6 +504,7 @@ function UpgradeModal({
   onDone: () => void;
 }) {
   const { toast } = useToast();
+  const { play } = useSound();
   const [targetId, setTargetId] = useState("");
   const [balance, setBalance] = useState("0");
   const [loading, setLoading] = useState(false);
@@ -522,8 +527,10 @@ function UpgradeModal({
     setLoading(false);
     if (res.ok) {
       if (res.data!.success) {
+        play("upgrade");
         toast(`Успех! Шанс был ${res.data!.chance}%`, "success");
       } else {
+        play("error");
         toast(`Не повезло. Шанс был ${res.data!.chance}%`, "error");
       }
       onDone();

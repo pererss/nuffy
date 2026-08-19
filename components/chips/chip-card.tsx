@@ -26,10 +26,11 @@ export function ChipCard({
   return (
     <div
       className={cn(
-        "panel group flex flex-col overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-cardHover",
+        "panel group flex flex-col overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:border-brand/45 hover:shadow-cardHover",
         className
       )}
     >
+      <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-brand/40 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
       <Link
         href={href}
         className="flex flex-col items-center gap-3 px-4 pt-5 outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
@@ -45,7 +46,7 @@ export function ChipCard({
           <span className="truncate text-[14px] font-semibold leading-tight text-ink">
             {chip.name}
           </span>
-          <span className="truncate text-[11px] text-ink-faint">
+          <span className="truncate font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-ink-faint">
             {chip.collection.name} · №{chip.number}
           </span>
           <div className="flex items-center justify-center gap-1.5 pt-1">
@@ -58,7 +59,9 @@ export function ChipCard({
         <div className="flex min-w-0 flex-col gap-0.5 text-left">
           {price}
           {sub && (
-            <span className="truncate text-[11px] text-ink-faint">{sub}</span>
+            <span className="truncate font-mono text-[10px] uppercase tracking-[0.1em] text-ink-faint">
+              {sub}
+            </span>
           )}
         </div>
         {action}

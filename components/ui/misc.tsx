@@ -26,7 +26,10 @@ export function PanelHeader({
         className
       )}
     >
-      <h3 className="font-display text-sm font-semibold text-ink">{title}</h3>
+      <h3 className="flex items-center gap-2 font-display text-sm font-bold text-ink">
+        <span className="inline-block h-2 w-2 rounded-[2px] bg-brand" />
+        {title}
+      </h3>
       {right}
     </div>
   );
@@ -71,9 +74,9 @@ export function Price({
   size?: "sm" | "md" | "lg";
 }) {
   const sizes = {
-    sm: "text-[13px] font-semibold",
-    md: "text-[15px] font-bold",
-    lg: "text-2xl font-bold tracking-tight",
+    sm: "font-mono text-[12px] font-bold",
+    md: "font-mono text-[14px] font-bold",
+    lg: "font-mono text-2xl font-bold tracking-tight",
   };
   return (
     <span className={cn("tabular text-ink", sizes[size], className)}>
@@ -135,11 +138,14 @@ export function PageHeader({
   return (
     <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
       <div>
-        <h1 className="font-display text-xl font-bold tracking-tight text-ink">
+        <h1 className="flex items-center gap-2.5 font-display text-xl font-bold tracking-tight text-ink">
+          <span className="inline-block h-3 w-3 rounded-[3px] border-2 border-brand" />
           {title}
         </h1>
         {description && (
-          <p className="mt-0.5 text-[13px] text-ink-faint">{description}</p>
+          <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint">
+            {description}
+          </p>
         )}
       </div>
       {right}
