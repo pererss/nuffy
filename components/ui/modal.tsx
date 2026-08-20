@@ -47,24 +47,24 @@ export function Modal({
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 sm:p-8">
       <div
-        className="fixed inset-0 bg-black/70 backdrop-blur-[2px] animate-fade-in"
+        className="fixed inset-0 bg-[#000]/80 backdrop-blur-[2px] animate-fade-in"
         onClick={onClose}
       />
       <div
         ref={ref}
         className={cn(
-          "panel relative z-10 w-full shadow-modal animate-scale-in",
+          "panel relative z-10 w-full animate-scale-in",
           sizes[size]
         )}
       >
         {title !== undefined && (
-          <div className="flex items-center justify-between border-b border-panel-border px-5 py-3.5">
-            <h3 className="font-display text-[15px] font-semibold text-ink">
+          <div className="flex items-center justify-between border-b border-[rgb(var(--border))] px-5 py-3">
+            <h3 className="font-display text-[14px] font-semibold text-ink tracking-tight">
               {title}
             </h3>
             <button
               onClick={onClose}
-              className="rounded-lg p-1 text-ink-faint transition-colors hover:bg-panel-hover hover:text-ink"
+              className="rounded-[4px] p-1 text-ink-faint transition-colors hover:bg-[rgb(var(--surface-hover))] hover:text-ink"
               aria-label="Закрыть"
             >
               <X className="h-4 w-4" />
@@ -73,7 +73,7 @@ export function Modal({
         )}
         <div className="px-5 py-4">{children}</div>
         {actions && (
-          <div className="flex items-center justify-end gap-2 border-t border-panel-border px-5 py-3.5">
+          <div className="flex items-center justify-end gap-2 border-t border-[rgb(var(--border))] px-5 py-3">
             {actions}
           </div>
         )}

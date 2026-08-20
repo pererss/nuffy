@@ -19,52 +19,27 @@ export function BalanceModal({ open, onClose }: { open: boolean; onClose: () => 
   const [promo, setPromo] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const reset = () => {
-    setAmount("");
-    setPromo("");
-  };
+  const reset = () => { setAmount(""); setPromo(""); };
 
   const submit = async () => {
     if (mode === "promo") {
-      if (!promo.trim()) {
-        toast("Введите промокод", "warning");
-        return;
-      }
+      if (!promo.trim()) { toast("Введите промокод", "warning"); return; }
       setLoading(true);
       const res = await activatePromo(promo.trim().toUpperCase());
       setLoading(false);
-      if (res.ok) {
-        toast("Промокод активирован!", "success");
-        reset();
-        onClose();
-        router.refresh();
-      } else {
-        toast(res.error ?? "Ошибка", "error");
-      }
+      if (res.ok) { toast("Промокод активирован!", "success"); reset(); onClose(); router.refresh(); }
+      else toast(res.error ?? "Ошибка", "error");
       return;
     }
-
     const value = parseFloat(amount);
-    if (!value || value <= 0) {
-      toast("Введите корректную сумму", "warning");
-      return;
-    }
+    if (!value || value <= 0) { toast("Введите корректную сумму", "warning"); return; }
     setLoading(true);
     const res = await requestBalanceChange(mode, value);
     setLoading(false);
     if (res.ok) {
-      toast(
-        mode === "deposit"
-          ? "Заявка на пополнение создана"
-          : "Заявка на вывод создана",
-        "success"
-      );
-      reset();
-      onClose();
-      router.refresh();
-    } else {
-      toast(res.error ?? "Ошибка", "error");
-    }
+      toast(mode === "deposit" ? "Заявка на пополнение создана" : "Заявка на вывод создана", "success");
+      reset(); onClose(); router.refresh();
+    } else toast(res.error ?? "Ошибка", "error");
   };
 
   return (
@@ -74,33 +49,24 @@ export function BalanceModal({ open, onClose }: { open: boolean; onClose: () => 
       title="Баланс"
       actions={
         <>
-          <Button variant="ghost" size="sm" onClick={onClose}>
-            Отмена
-          </Button>
+          <Button variant="ghost" size="sm" onClick={onClose}>Отмена</Button>
           <Button size="sm" variant="primary" loading={loading} onClick={submit}>
             {mode === "deposit" ? "Пополнить" : mode === "withdraw" ? "Вывести" : "Активировать"}
           </Button>
         </>
       }
     >
-      <div className="mb-4 flex gap-1 rounded-lg bg-canvas-inset p-1">
+      <div className="mb-4 flex gap-1 rounded-[4px] bg-[rgb(var(--surface-2))] p-1">
         {(["deposit", "withdraw", "promo"] as const).map((m) => (
           <button
             key={m}
-            onClick={() => {
-              setMode(m);
-              reset();
-            }}
+            onClick={() => { setMode(m); reset(); }}
             className={cn(
-              "flex-1 rounded-md py-1.5 text-[13px] font-medium transition-colors",
-              mode === m ? "bg-panel-hover text-ink" : "text-ink-faint"
+              "flex-1 rounded-[3px] py-1.5 text-[12px] font-medium transition-colors",
+              mode === m ? "bg-[rgb(var(--surface-hover))] text-ink" : "text-ink-faint"
             )}
           >
-            {m === "deposit"
-              ? "Пополнение"
-              : m === "withdraw"
-                ? "Вывод"
-                : "Промокод"}
+            {m === "deposit" ? "Пополнение" : m === "withdraw" ? "Вывод" : "Промокод"}
           </button>
         ))}
       </div>
@@ -108,9 +74,9 @@ export function BalanceModal({ open, onClose }: { open: boolean; onClose: () => 
       {mode === "promo" ? (
         <Field label="Промокод" hint="Введите код из акций NUFFY">
           <div className="relative">
-            <Ticket className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-dim" />
+            <Ticket className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-dim" />
             <Input
-              className="pl-9 font-mono uppercase tracking-widest"
+              className="pl-8 font-mono uppercase tracking-widest h-9 text-[13px]"
               placeholder="NUFFY100"
               value={promo}
               onChange={(e) => setPromo(e.target.value)}
@@ -120,23 +86,16 @@ export function BalanceModal({ open, onClose }: { open: boolean; onClose: () => 
         </Field>
       ) : (
         <Field label="Сумма, ₽">
-          <Input
-            type="number"
-            min={1}
-            step="0.01"
-            placeholder="1000"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-          />
+          <Input type="number" min={1} step="0.01" placeholder="1000" value={amount} onChange={(e) => setAmount(e.target.value)} />
         </Field>
       )}
 
-      <p className="mt-3 text-xs leading-relaxed text-ink-faint">
+      <p className="mt-3 text-[11px] leading-relaxed text-ink-faint">
         {mode === "promo"
           ? "Промокод пополняет баланс и используется один раз."
           : mode === "deposit"
-            ? "Заявка на пополнение создаётся в системе и будет обработана в ближайшее время."
-            : "Заявка на вывод создаётся в системе и будет обработана в ближайшее время."}
+            ? "Заявка на пополнение будет обработана в ближайшее время."
+            : "Заявка на вывод будет обработана в ближайшее время."}
       </p>
     </Modal>
   );

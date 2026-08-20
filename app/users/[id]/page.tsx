@@ -29,56 +29,56 @@ export default async function UserPage({ params }: { params: Promise<{ id: strin
     : "";
 
   return (
-    <>
+    <div className="page-enter">
       <PageHeader
         title={profile.username}
         description={joined ? `Участник с ${joined}` : ""}
       />
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-5 lg:grid-cols-3">
+        {/* Profile card */}
         <Panel className="p-5">
-          <div className="flex items-center gap-4">
-            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand/15 font-display text-lg font-bold text-brand">
+          <div className="flex items-center gap-3.5">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[6px] bg-brand/15 font-display text-lg font-bold text-brand">
               {profile.username.slice(0, 1).toUpperCase()}
             </span>
             <div>
-              <h1 className="font-display text-lg font-bold text-ink">{profile.username}</h1>
-              <p className="text-[12px] text-ink-faint">
-                {fmtDate(profile.created_at ?? new Date().toISOString())}
-              </p>
+              <h1 className="font-display text-[15px] font-bold tracking-tight text-ink">{profile.username}</h1>
+              <p className="text-[11px] text-ink-faint">{fmtDate(profile.created_at ?? new Date().toISOString())}</p>
             </div>
           </div>
-          <div className="mt-5 grid grid-cols-2 gap-3">
-            <div className="rounded-lg border border-panel-border bg-canvas-inset px-3 py-2.5">
-              <p className="text-[11px] text-ink-faint">Фишек</p>
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            <div className="rounded-[4px] border border-[rgb(var(--border))] bg-[rgb(var(--surface-2))] px-3 py-2">
+              <p className="text-[10px] text-ink-faint">Фишек</p>
               <p className="mt-0.5 text-[15px] font-semibold tabular text-ink">
                 {fmtNumber(stats?.itemsCount ?? 0)}
               </p>
             </div>
-            <div className="rounded-lg border border-panel-border bg-canvas-inset px-3 py-2.5">
-              <p className="text-[11px] text-ink-faint">Листингов</p>
+            <div className="rounded-[4px] border border-[rgb(var(--border))] bg-[rgb(var(--surface-2))] px-3 py-2">
+              <p className="text-[10px] text-ink-faint">Листингов</p>
               <p className="mt-0.5 text-[15px] font-semibold tabular text-ink">
                 {fmtNumber(stats?.listingsCount ?? 0)}
               </p>
             </div>
-            <div className="col-span-2 rounded-lg border border-panel-border bg-canvas-inset px-3 py-2.5">
-              <p className="text-[11px] text-ink-faint">Лучший предмет</p>
+            <div className="col-span-2 rounded-[4px] border border-[rgb(var(--border))] bg-[rgb(var(--surface-2))] px-3 py-2">
+              <p className="text-[10px] text-ink-faint">Лучший предмет</p>
               {stats?.bestChip ? (
-                <p className="mt-0.5 text-[15px] font-semibold tabular text-ink">
+                <p className="mt-0.5 text-[14px] font-semibold tabular text-ink">
                   {stats.bestChip.name}
                   <span className="ml-2 text-ink-faint">
                     {fmtNumber(Math.round(stats.bestChip.base_price))} ₽
                   </span>
                 </p>
               ) : (
-                <p className="mt-0.5 text-[13px] text-ink-faint">—</p>
+                <p className="mt-0.5 text-[12px] text-ink-faint">—</p>
               )}
             </div>
           </div>
         </Panel>
 
+        {/* Listings */}
         <div className="lg:col-span-2">
           <div className="mb-3 flex items-center gap-2">
-            <h2 className="font-display text-base font-bold text-ink">Активные лоты</h2>
+            <h2 className="font-display text-[13px] font-bold tracking-[0.08em] text-ink">Активные лоты</h2>
             <Badge variant="neutral">{cards.length}</Badge>
           </div>
           {cards.length === 0 ? (
@@ -89,19 +89,19 @@ export default async function UserPage({ params }: { params: Promise<{ id: strin
               />
             </Panel>
           ) : (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
               {cards.map((c) => (
                 <ChipCard
                   key={c.listing_id}
                   chip={c}
                   href={`/marketplace/${c.listing_id}`}
-                  price={<span className="tabular text-sm font-bold text-ink">{fmtNumber(Math.round(c.listing_price))} ₽</span>}
+                  price={<span className="tabular text-[12px] font-bold text-ink">{fmtNumber(Math.round(c.listing_price))} ₽</span>}
                 />
               ))}
             </div>
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { Ban, Check, Gift, Minus, Plus, Shield, Search, Trophy } from "lucide-react";
+import { Ban, Check, Gift, Minus, Plus, Shield, Search } from "lucide-react";
 import { Button, IconButton } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { Input, Select, Field } from "@/components/ui/form";
@@ -119,124 +119,135 @@ export function UsersPanel({
 
   return (
     <div>
-      <div className="mb-4 flex flex-wrap items-center gap-3">
+      {/* Search bar */}
+      <div className="mb-4 flex flex-wrap items-center gap-2">
         <form
-          className="flex gap-2"
+          className="flex gap-2 flex-1"
           onSubmit={(e) => {
             e.preventDefault();
             apply("q", search);
           }}
         >
-          <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Имя или ID аккаунта…"
-            className="w-72"
-          />
-          <Button variant="secondary" size="sm">
+          <div className="relative flex-1">
+            <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-dim" />
+            <Input
+              className="pl-8 h-9 text-[13px]"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Имя или ID аккаунта…"
+            />
+          </div>
+          <Button variant="secondary" size="sm" className="h-9">
             <Search className="h-3.5 w-3.5" />
           </Button>
         </form>
-        <span className="text-[12px] text-ink-faint">{fmtNumber(total)} пользователей</span>
+        <span className="text-[11px] text-ink-faint shrink-0">{fmtNumber(total)} пользователей</span>
       </div>
 
-      <div className="overflow-x-auto rounded-card border border-panel-border">
-        <table className="w-full min-w-[860px] text-left text-[13px]">
-          <thead>
-            <tr className="border-b border-panel-border bg-panel-hover/50 text-[11px] uppercase tracking-wider text-ink-faint">
-              <th className="px-3 py-2.5 font-semibold">Пользователь</th>
-              <th className="px-3 py-2.5 font-semibold">Баланс</th>
-              <th className="px-3 py-2.5 font-semibold">Фишки</th>
-              <th className="px-3 py-2.5 font-semibold">Роль</th>
-              <th className="px-3 py-2.5 font-semibold">Дата</th>
-              <th className="px-3 py-2.5 text-right font-semibold">Действия</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-panel-border">
-            {initialUsers.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="px-3 py-6 text-center text-ink-faint">
-                  Никого не найдено
-                </td>
+      {/* Table */}
+      <div className="panel overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[820px] text-[13px]">
+            <thead>
+              <tr className="border-b border-[rgb(var(--border))] bg-[rgb(var(--surface-2))]">
+                <th className="px-3 py-2 text-left font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-ink-faint">Пользователь</th>
+                <th className="px-3 py-2 text-left font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-ink-faint">Баланс</th>
+                <th className="px-3 py-2 text-left font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-ink-faint">Фишки</th>
+                <th className="px-3 py-2 text-left font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-ink-faint">Роль</th>
+                <th className="px-3 py-2 text-left font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-ink-faint">Дата</th>
+                <th className="px-3 py-2 w-28"></th>
               </tr>
-            ) : (
-              initialUsers.map((u) => (
-                <tr key={u.id} className="hover:bg-panel-hover/40">
-                  <td className="px-3 py-2.5">
-                    <Link
-                      href={`/users/${u.id}`}
-                      className="font-medium text-ink hover:text-brand"
-                    >
-                      {u.username}
-                    </Link>
-                    <p className="text-[11px] text-ink-faint">
-                      {fmtAccountId(u.account_id)}
-                      {u.email ? ` · ${u.email}` : ""}
-                    </p>
-                    {u.is_banned && (
-                      <Badge variant="danger" className="mt-1">
-                        Заблокирован
-                      </Badge>
-                    )}
-                  </td>
-                  <td className="px-3 py-2.5 tabular text-ink">
-                    {fmtNumber(Math.round(u.balance))} ₽
-                  </td>
-                  <td className="px-3 py-2.5 tabular text-ink-faint">{fmtNumber(u.items)}</td>
-                  <td className="px-3 py-2.5">
-                    <Select
-                      className="w-28"
-                      value={u.role}
-                      disabled={busyUserId === u.id}
-                      onChange={(e) => setRole(u, e.target.value as "user" | "admin")}
-                    >
-                      <option value="user">user</option>
-                      <option value="admin">admin</option>
-                    </Select>
-                  </td>
-                  <td className="px-3 py-2.5 text-ink-faint">{fmtDate(u.created_at)}</td>
-                  <td className="px-3 py-2.5">
-                    <div className="flex items-center justify-end gap-1">
-                      <IconButton
-                        size="sm"
-                        title="Пополнить баланс"
-                        onClick={() => setAction({ type: "balance", user: u })}
-                      >
-                        <Plus className="h-3.5 w-3.5" />
-                      </IconButton>
-                      <IconButton
-                        size="sm"
-                        title="Списать с баланса"
-                        onClick={() => setAction({ type: "balance", user: u })}
-                      >
-                        <Minus className="h-3.5 w-3.5" />
-                      </IconButton>
-                      <IconButton
-                        size="sm"
-                        title="Выдать фишку"
-                        onClick={() => setAction({ type: "chip", user: u })}
-                      >
-                        <Gift className="h-3.5 w-3.5" />
-                      </IconButton>
-                      <IconButton
-                        size="sm"
-                        title={u.is_banned ? "Разблокировать" : "Заблокировать"}
-                        loading={busyUserId === u.id}
-                        onClick={() => toggleBan(u)}
-                      >
-                        {u.is_banned ? (
-                          <Check className="h-3.5 w-3.5" />
-                        ) : (
-                          <Ban className="h-3.5 w-3.5" />
-                        )}
-                      </IconButton>
-                    </div>
+            </thead>
+            <tbody className="divide-y divide-[rgb(var(--border))]">
+              {initialUsers.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-3 py-6 text-center text-ink-faint">
+                    Никого не найдено
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                initialUsers.map((u) => (
+                  <tr key={u.id} className="transition-colors hover:bg-[rgb(var(--surface-hover))]/50">
+                    <td className="px-3 py-2">
+                      <Link
+                        href={`/users/${u.id}`}
+                        className="font-medium text-ink hover:text-brand"
+                      >
+                        {u.username}
+                      </Link>
+                      <p className="text-[10px] text-ink-faint font-mono">
+                        {fmtAccountId(u.account_id)}
+                        {u.email ? ` · ${u.email}` : ""}
+                      </p>
+                      {u.is_banned && (
+                        <Badge variant="danger" className="mt-1">
+                          Заблокирован
+                        </Badge>
+                      )}
+                    </td>
+                    <td className="px-3 py-2 tabular text-ink font-medium">
+                      {fmtNumber(Math.round(u.balance))} ₽
+                    </td>
+                    <td className="px-3 py-2 tabular text-ink-faint">{fmtNumber(u.items)}</td>
+                    <td className="px-3 py-2">
+                      <Select
+                        className="w-24 h-7 text-[11px]"
+                        value={u.role}
+                        disabled={busyUserId === u.id}
+                        onChange={(e) => setRole(u, e.target.value as "user" | "admin")}
+                      >
+                        <option value="user">user</option>
+                        <option value="admin">admin</option>
+                      </Select>
+                    </td>
+                    <td className="px-3 py-2 text-ink-faint text-[11px]">{fmtDate(u.created_at)}</td>
+                    <td className="px-3 py-2">
+                      <div className="flex items-center justify-end gap-0.5">
+                        <IconButton
+                          size="sm"
+                          title="Пополнить"
+                          onClick={() => setAction({ type: "balance", user: u })}
+                          className="h-7 w-7"
+                        >
+                          <Plus className="h-3 w-3" />
+                        </IconButton>
+                        <IconButton
+                          size="sm"
+                          title="Списать"
+                          onClick={() => setAction({ type: "balance", user: u })}
+                          className="h-7 w-7"
+                        >
+                          <Minus className="h-3 w-3" />
+                        </IconButton>
+                        <IconButton
+                          size="sm"
+                          title="Выдать фишку"
+                          onClick={() => setAction({ type: "chip", user: u })}
+                          className="h-7 w-7"
+                        >
+                          <Gift className="h-3 w-3" />
+                        </IconButton>
+                        <IconButton
+                          size="sm"
+                          title={u.is_banned ? "Разблокировать" : "Заблокировать"}
+                          loading={busyUserId === u.id}
+                          onClick={() => toggleBan(u)}
+                          className="h-7 w-7"
+                        >
+                          {u.is_banned ? (
+                            <Check className="h-3 w-3" />
+                          ) : (
+                            <Ban className="h-3 w-3" />
+                          )}
+                        </IconButton>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {pages > 1 && (
@@ -245,21 +256,16 @@ export function UsersPanel({
         </div>
       )}
 
+      {/* Balance modal */}
       <Modal
         open={action?.type === "balance"}
         onClose={() => setAction(null)}
         title={`Баланс: ${action?.user.username ?? ""}`}
         actions={
           <>
-            <Button variant="ghost" size="sm" onClick={() => setAction(null)}>
-              Отмена
-            </Button>
-            <Button size="sm" variant="primary" loading={busy} onClick={() => doAdjust(1)}>
-              Пополнить
-            </Button>
-            <Button size="sm" variant="danger" loading={busy} onClick={() => doAdjust(-1)}>
-              Списать
-            </Button>
+            <Button variant="ghost" size="sm" onClick={() => setAction(null)}>Отмена</Button>
+            <Button size="sm" variant="primary" loading={busy} onClick={() => doAdjust(1)}>Пополнить</Button>
+            <Button size="sm" variant="danger" loading={busy} onClick={() => doAdjust(-1)}>Списать</Button>
           </>
         }
       >
@@ -274,15 +280,14 @@ export function UsersPanel({
         </Field>
       </Modal>
 
+      {/* Chip modal */}
       <Modal
         open={action?.type === "chip"}
         onClose={() => setAction(null)}
         title={`Выдать фишку: ${action?.user.username ?? ""}`}
         actions={
           <>
-            <Button variant="ghost" size="sm" onClick={() => setAction(null)}>
-              Отмена
-            </Button>
+            <Button variant="ghost" size="sm" onClick={() => setAction(null)}>Отмена</Button>
             <Button size="sm" variant="primary" loading={busy} onClick={doIssue}>
               <Gift className="h-3.5 w-3.5" />
               Выдать
@@ -300,7 +305,7 @@ export function UsersPanel({
             ))}
           </Select>
         </Field>
-        <p className="mt-3 text-xs text-ink-faint">
+        <p className="mt-2 text-[10px] text-ink-faint">
           Экземпляр выдаётся без lock и засчитывается в тираж коллекции.
         </p>
       </Modal>

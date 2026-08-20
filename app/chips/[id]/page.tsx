@@ -73,23 +73,24 @@ export default async function ChipPage({
   const collection = catalog.collections.find((c) => c.id === chip.collection_id);
 
   return (
-    <div>
+    <div className="page-enter">
       <Link
         href="/shop"
-        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-ink-faint transition-colors hover:text-ink"
+        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-ink-faint transition-colors hover:text-ink btn-press"
       >
         <ArrowLeft className="h-3.5 w-3.5" /> Магазин
       </Link>
 
-      <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
-        {/* left: chip */}
+      <div className="grid gap-5 lg:grid-cols-[340px_1fr]">
+        {/* Left: chip + buy */}
         <div className="flex flex-col gap-4">
-          <Panel className="flex flex-col items-center gap-4 p-6">
+          {/* Main chip card */}
+          <Panel className="flex flex-col items-center gap-3 p-5">
             <div
-              className="relative flex w-full items-center justify-center rounded-xl py-2"
+              className="relative flex w-full items-center justify-center rounded-[6px] py-3"
               style={{
                 background:
-                  "radial-gradient(circle at 50% 38%, rgb(var(--brand) / 0.16), rgb(var(--base-inset)) 68%)",
+                  "radial-gradient(circle at 50% 40%, rgb(var(--brand) / 0.12), rgb(var(--surface-2)) 70%)",
               }}
             >
               <div className="animate-pop-in">
@@ -98,75 +99,62 @@ export default async function ChipPage({
                   imageUrl={chip.image_url}
                   crop={chip.image_crop}
                   rarity={chip.rarity.slug}
-                  size={220}
+                  size={200}
                 />
               </div>
             </div>
             <div className="text-center">
-              <h1 className="font-display text-lg font-bold text-ink">
+              <h1 className="font-display text-[17px] font-bold tracking-tight text-ink">
                 {chip.name}
               </h1>
-              <p className="mt-0.5 text-[12px] text-ink-faint">
-                ID: {chip.id.slice(0, 8)} · №{chip.number} ·{" "}
-                {chip.collection.name}
+              <p className="mt-0.5 font-mono text-[10px] text-ink-faint">
+                ID: {chip.id.slice(0, 8)} · №{chip.number} · {chip.collection.name}
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <RarityBadge slug={chip.rarity.slug} />
-              <LevelBadge level={chip.level.name} />
-            </div>
-            <div className="flex items-center gap-2">
-              {user && <FavoriteButton chipId={chip.id} liked={favorites.has(chip.id)} />}
-              <LinkToUpgrade href={`/upgrades?target=${chip.id}`} label="Апгрейд до" />
+              <RarityBadge slug={chip.rarity.slug} name={chip.rarity.name} />
+              <LevelBadge level={chip.level.name.replace("Level ", "L")} />
             </div>
           </Panel>
 
-          <Panel className="flex flex-col gap-1 p-4 text-[13px]">
-            <div className="flex justify-between py-1">
-              <span className="text-ink-faint">Первоначальная цена</span>
-              <Price value={chip.base_price} size="sm" />
-            </div>
-            <div className="flex justify-between py-1">
-              <span className="text-ink-faint">Текущая цена</span>
-              <Price
-                value={
-                  listingsRes.listings.length > 0
-                    ? listingsRes.listings[0].price
-                    : chip.base_price
-                }
-                size="sm"
-              />
-            </div>
-            <div className="flex justify-between py-1">
-              <span className="text-ink-faint">Тираж</span>
-              <span className="tabular text-ink">{fmtNumber(chip.total_minted)}</span>
-            </div>
-            <div className="flex justify-between py-1">
-              <span className="text-ink-faint">Продано</span>
-              <span className="tabular text-ink">{fmtNumber(chip.sold_count)}</span>
-            </div>
-            <div className="flex justify-between py-1">
-              <span className="text-ink-faint">Доступно в магазине</span>
-              <span className="tabular text-ink">{fmtNumber(stock)}</span>
-            </div>
-            <div className="flex justify-between py-1">
-              <span className="text-ink-faint">Коллекция</span>
-              <span className="text-ink">
-                {collection?.status === "sold_out" ? "Распродана" : "В продаже"}
-              </span>
-            </div>
+          {/* Stats */}
+          <Panel className="flex flex-col gap-0.5 p-3.5 text-[13px]">
+            {[
+              { label: "Первоначальная цена", value: fmtPrice(chip.base_price) },
+              { label: "Текущая цена", value: fmtPrice(
+                listingsRes.listings.length > 0
+                  ? listingsRes.listings[0].price
+                  : chip.base_price
+              )},
+              { label: "Тираж", value: fmtNumber(chip.total_minted) },
+              { label: "Продано", value: fmtNumber(chip.sold_count) },
+              { label: "Доступно", value: fmtNumber(stock) },
+              { label: "Коллекция", value: collection?.status === "sold_out" ? "Распродана" : "В продаже" },
+            ].map((row) => (
+              <div key={row.label} className="flex items-center justify-between py-1.5 border-b border-[rgb(var(--border))]/50 last:border-0">
+                <span className="text-ink-faint">{row.label}</span>
+                <span className="tabular font-medium text-ink">{row.value}</span>
+              </div>
+            ))}
           </Panel>
 
+          {/* Buy button */}
           <BuyChipBig chipId={chip.id} stock={stock} price={chip.base_price} />
+
+          {/* Actions */}
+          <div className="flex gap-2">
+            {user && <FavoriteButton chipId={chip.id} liked={favorites.has(chip.id)} />}
+            <LinkToUpgrade href={`/upgrades?target=${chip.id}`} label="Апгрейд до" />
+          </div>
         </div>
 
-        {/* right: instances + marketplace + history */}
-        <div className="flex min-w-0 flex-col gap-6">
-          {/* my instances */}
+        {/* Right: instances + listings + history */}
+        <div className="flex min-w-0 flex-col gap-4">
+          {/* My instances */}
           {user && myInstances.length > 0 && (
             <Panel>
               <PanelHeader title="Мои экземпляры" />
-              <div className="flex flex-col divide-y divide-panel-border">
+              <div className="flex flex-col divide-y divide-[rgb(var(--border))]">
                 {myInstances.map((inst) => {
                   const lock = lockInfo(inst.locked_until);
                   const listed = listingsRes.listings.find(
@@ -175,7 +163,7 @@ export default async function ChipPage({
                   const sellable =
                     !lock.locked && collection?.status === "sold_out" && !listed;
                   return (
-                    <div key={inst.id} className="flex flex-col gap-3 p-4">
+                    <div key={inst.id} className="flex flex-col gap-2.5 p-3.5">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="text-[13px] font-semibold text-ink">
                           Экземпляр №{inst.serial}
@@ -183,7 +171,7 @@ export default async function ChipPage({
                         <LockBadge locked={lock.locked} />
                         {listed && <StatusPill tone="info">Выставлена</StatusPill>}
                       </div>
-                      <div className="grid gap-x-6 gap-y-1 text-[12px] sm:grid-cols-2">
+                      <div className="grid gap-x-5 gap-y-1 text-[12px] sm:grid-cols-2">
                         <span className="text-ink-faint">
                           Получена: <span className="text-ink-soft">{fmtDate(inst.acquired_at)}</span>
                         </span>
@@ -201,11 +189,11 @@ export default async function ChipPage({
                         </span>
                       </div>
 
-                      <div className="flex flex-col gap-1.5 rounded-lg border border-panel-border bg-canvas-inset p-3 text-[13px]">
+                      {/* Sell status box */}
+                      <div className="flex flex-col gap-1 rounded-[4px] border border-[rgb(var(--border))] bg-[rgb(var(--surface-2))] p-2.5 text-[13px]">
                         {listed ? (
                           <p className="text-ink-soft">
-                            Выставлена на площадке за{" "}
-                            <Price value={listed.price} size="sm" /> ·{" "}
+                            Выставлена за <Price value={listed.price} size="sm" /> ·{" "}
                             <Link
                               href={`/marketplace/${listed.id}`}
                               className="text-brand hover:text-brand-hover"
@@ -215,37 +203,21 @@ export default async function ChipPage({
                           </p>
                         ) : lock.locked ? (
                           <>
-                            <p className="font-semibold text-warn">
-                              Продажа недоступна
-                            </p>
-                            <p className="text-ink-soft">
-                              Причина: фишка заблокирована
-                            </p>
-                            <p className="text-ink-faint">
-                              Осталось: {lock.remainingText}
-                            </p>
-                            <p className="text-[11px] text-ink-dim">
-                              Lock не снимается при распродаже коллекции: нужно
-                              выполнить оба условия.
-                            </p>
+                            <p className="font-semibold text-warn">Продажа недоступна</p>
+                            <p className="text-ink-soft">Фишка заблокирована</p>
+                            <p className="text-[11px] text-ink-dim">Осталось: {lock.remainingText}</p>
                           </>
                         ) : collection?.status !== "sold_out" ? (
                           <>
-                            <p className="font-semibold text-warn">
-                              Продажа недоступна
-                            </p>
-                            <p className="text-ink-soft">
-                              Причина: коллекция ещё не распродана
-                            </p>
+                            <p className="font-semibold text-warn">Продажа недоступна</p>
+                            <p className="text-ink-soft">Коллекция ещё не распродана</p>
                           </>
                         ) : (
-                          <p className="font-semibold text-ok">
-                            Продажа доступна
-                          </p>
+                          <p className="font-semibold text-ok">Продажа доступна</p>
                         )}
                       </div>
 
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap gap-2">
                         <SellChipModal
                           instanceId={inst.id}
                           chipName={chip.name}
@@ -254,7 +226,12 @@ export default async function ChipPage({
                           collectionSoldOut={collection?.status === "sold_out"}
                           listed={Boolean(listed)}
                           trigger={(open) => (
-                            <ButtonSell onClick={open} />
+                            <button
+                              onClick={open}
+                              className="inline-flex h-8 items-center rounded-[4px] bg-ok/10 px-3 text-[12px] font-semibold text-ok transition-colors hover:bg-ok/20 btn-press"
+                            >
+                              Продать
+                            </button>
                           )}
                         />
                         <LinkToUpgrade
@@ -263,7 +240,7 @@ export default async function ChipPage({
                         />
                         <Link
                           href={`/trades?source=${inst.id}`}
-                          className="inline-flex h-10 items-center gap-2 rounded-lg border border-panel-border px-4 text-sm font-medium text-ink-soft transition-colors hover:border-brand/40 hover:text-brand"
+                          className="inline-flex h-8 items-center gap-1.5 rounded-[4px] border border-[rgb(var(--border))] px-3 text-[12px] font-medium text-ink-soft transition-colors hover:border-[rgb(var(--brand-border))] hover:text-brand btn-press"
                         >
                           Обменять
                         </Link>
@@ -275,41 +252,40 @@ export default async function ChipPage({
             </Panel>
           )}
 
-          {/* active listings */}
+          {/* Active listings */}
           <Panel>
             <PanelHeader title="Сейчас продаётся" />
             {listingsRes.listings.length === 0 ? (
-              <p className="px-4 py-5 text-[13px] text-ink-faint">
+              <p className="px-3.5 py-4 text-[13px] text-ink-faint">
                 Объявлений пока нет — фишку можно купить в магазине.
               </p>
             ) : (
-              <div className="flex flex-col divide-y divide-panel-border">
+              <div className="flex flex-col divide-y divide-[rgb(var(--border))]">
                 {listingsRes.listings.map((l) => (
                   <div
                     key={l.id}
-                    className="flex items-center gap-3 px-4 py-3"
+                    className="flex items-center gap-3 px-3.5 py-2.5"
                   >
                     <ChipImage
                       name={chip.name}
                       imageUrl={chip.image_url}
                       crop={chip.image_crop}
                       rarity={chip.rarity.slug}
-                      size={44}
+                      size={40}
                       ring={false}
                     />
                     <div className="min-w-0 flex-1">
                       <p className="text-[13px] font-semibold text-ink">
                         {l.instance.chip.name} · №{l.instance.serial}
                       </p>
-                      <p className="text-[12px] text-ink-faint">
-                        Продавец @{userNameMap.get(l.seller_id)?.username ?? "—"} ·{" "}
-                        {fmtDate(l.listed_at)}
+                      <p className="text-[11px] text-ink-faint">
+                        @{userNameMap.get(l.seller_id)?.username ?? "—"} · {fmtDate(l.listed_at)}
                       </p>
                     </div>
                     <Price value={l.price} size="sm" />
                     <Link
                       href={`/marketplace/${l.id}`}
-                      className="rounded-lg border border-panel-border px-3 py-1.5 text-[12px] font-medium text-ink-soft transition-colors hover:border-brand/40 hover:text-brand"
+                      className="rounded-[4px] border border-[rgb(var(--border))] px-2.5 py-1 text-[11px] font-medium text-ink-soft transition-colors hover:border-[rgb(var(--brand-border))] hover:text-brand btn-press"
                     >
                       Открыть
                     </Link>
@@ -319,23 +295,21 @@ export default async function ChipPage({
             )}
           </Panel>
 
-          {/* sales history */}
+          {/* Sales history */}
           <Panel>
             <PanelHeader
               title="История продаж"
-              right={<ShoppingBag className="h-4 w-4 text-ink-dim" />}
+              right={<ShoppingBag className="h-3.5 w-3.5 text-ink-dim" />}
             />
             {sales.length === 0 ? (
-              <p className="px-4 py-5 text-[13px] text-ink-faint">
+              <p className="px-3.5 py-4 text-[13px] text-ink-faint">
                 Продаж пока не было.
               </p>
             ) : (
-              <div className="flex flex-col divide-y divide-panel-border text-[12px]">
+              <div className="flex flex-col divide-y divide-[rgb(var(--border))] text-[12px]">
                 {sales.map((s) => (
-                  <div key={s.id} className="flex items-center gap-3 px-4 py-2.5">
-                    <span className="w-28 shrink-0 text-ink-faint">
-                      {fmtDate(s.created_at)}
-                    </span>
+                  <div key={s.id} className="flex items-center gap-3 px-3.5 py-2">
+                    <span className="w-28 shrink-0 text-ink-faint">{fmtDate(s.created_at)}</span>
                     <span className="flex-1 truncate text-ink-soft">
                       {s.seller_id
                         ? `@${userNameMap.get(s.seller_id)?.username ?? "—"}`
@@ -345,38 +319,34 @@ export default async function ChipPage({
                         ? `@${userNameMap.get(s.buyer_id)?.username ?? "—"}`
                         : "—"}
                     </span>
-                    <span className="tabular font-semibold text-ink">
-                      {fmtPrice(s.amount)}
-                    </span>
+                    <span className="tabular font-semibold text-ink">{fmtPrice(s.amount)}</span>
                   </div>
                 ))}
               </div>
             )}
           </Panel>
 
-          {/* ownership history */}
+          {/* Ownership history */}
           <Panel>
             <PanelHeader
               title="История владельцев"
-              right={<History className="h-4 w-4 text-ink-dim" />}
+              right={<History className="h-3.5 w-3.5 text-ink-dim" />}
             />
             {events.length === 0 ? (
-              <p className="px-4 py-5 text-[13px] text-ink-faint">
+              <p className="px-3.5 py-4 text-[13px] text-ink-faint">
                 История пуста.
               </p>
             ) : (
-              <div className="flex max-h-72 flex-col gap-0 overflow-y-auto">
+              <div className="max-h-64 overflow-y-auto">
                 {events.map((e, i) => (
                   <div
                     key={e.id}
                     className={cn(
-                      "flex items-center gap-3 px-4 py-2 text-[12px]",
-                      i % 2 === 1 && "bg-canvas-inset/60"
+                      "flex items-center gap-3 px-3.5 py-2 text-[12px]",
+                      i % 2 === 1 && "bg-[rgb(var(--surface-2))]/50"
                     )}
                   >
-                    <span className="w-28 shrink-0 text-ink-faint">
-                      {fmtDate(e.created_at)}
-                    </span>
+                    <span className="w-28 shrink-0 text-ink-faint">{fmtDate(e.created_at)}</span>
                     <TrendingUp className="h-3.5 w-3.5 shrink-0 text-ink-dim" />
                     <span className="truncate text-ink-soft">
                       {eventLabel(e.event, e.meta)} —{" "}
@@ -404,28 +374,11 @@ function eventLabel(
   meta: Record<string, unknown> | null
 ): string {
   switch (event) {
-    case "minted":
-      return "Выпуск";
-    case "listed":
-      return "Выставлена на площадке";
-    case "unlisted":
-      return "Снята с площадки";
-    case "transfer":
-      return meta?.via === "trade" ? "Обмен" : "Переход";
-    case "upgrade_burned":
-      return "Сожжена в апгрейде";
-    default:
-      return event;
+    case "minted": return "Выпуск";
+    case "listed": return "Выставлена на площадке";
+    case "unlisted": return "Снята с площадки";
+    case "transfer": return meta?.via === "trade" ? "Обмен" : "Переход";
+    case "upgrade_burned": return "Сожжена в апгрейде";
+    default: return event;
   }
-}
-
-function ButtonSell({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className="inline-flex h-10 items-center rounded-lg bg-ok/10 px-4 text-sm font-semibold text-ok transition-colors hover:bg-ok/20"
-    >
-      Продать
-    </button>
-  );
 }

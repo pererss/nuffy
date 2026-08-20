@@ -84,14 +84,20 @@ export function UpgradesView({
   };
 
   return (
-    <div>
-      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+    <div className="page-enter">
+      <div className="grid gap-5 lg:grid-cols-[1fr_300px]">
+        {/* Main upgrade panel */}
         <div className="flex flex-col gap-4">
           <Panel className="p-5">
+            <h2 className="mb-4 flex items-center gap-2 font-display text-[13px] font-bold tracking-[0.08em] text-ink">
+              <Flame className="h-4 w-4 text-brand" />
+              АПГРЕЙД
+            </h2>
+
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Фишка (сгорает)">
+              <Field label="Фишка (сгорит)">
                 <Select value={sourceId} onChange={(e) => setSourceId(e.target.value)}>
-                  <option value="">Выберите фишку…</option>
+                  <option value="">Выберите…</option>
                   {owned.map((i) => (
                     <option key={i.id} value={i.id}>
                       {i.chip_name} №{i.serial} · {fmtPrice(i.base_price)}
@@ -101,7 +107,7 @@ export function UpgradesView({
               </Field>
               <Field label="Целевая фишка">
                 <Select value={targetId} onChange={(e) => setTargetId(e.target.value)}>
-                  <option value="">Выберите цель…</option>
+                  <option value="">Выберите…</option>
                   {allChips
                     .filter((c) => c.base_price > (source?.base_price ?? 0))
                     .map((c) => (
@@ -112,6 +118,7 @@ export function UpgradesView({
                 </Select>
               </Field>
             </div>
+
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <Field label="Добавить из баланса, ₽" hint="Увеличивает шанс, сгорает при неудаче">
                 <Input
@@ -122,26 +129,53 @@ export function UpgradesView({
                 />
               </Field>
               <div className="flex flex-col justify-end gap-1">
-                <div className="flex items-end justify-between rounded-lg border border-panel-border bg-canvas-inset px-3.5 py-2.5">
-                  <span className="text-[12px] text-ink-faint">Шанс</span>
+                <div className="flex items-end justify-between rounded-[4px] border border-[rgb(var(--border))] bg-[rgb(var(--surface-2))] px-3 py-2">
+                  <span className="text-[11px] text-ink-faint">Шанс</span>
                   <span className="font-display text-3xl font-bold tabular text-brand">{chance}%</span>
                 </div>
               </div>
             </div>
 
-            <div className="mt-4 flex items-center justify-between rounded-lg border border-panel-border bg-canvas-inset px-3.5 py-3 text-[13px]">
+            {/* Summary bar */}
+            <div className="mt-4 flex items-center justify-between rounded-[4px] border border-[rgb(var(--border))] bg-[rgb(var(--surface-2))] px-3 py-2.5 text-[13px]">
               <span className="text-ink-faint">
-                Залог:{" "}
-                <b className="text-ink">{Math.round(sourceValue)} ₽</b>{" "}
-                {balanceNum > 0 && <span className="text-ink-soft">+ {Math.round(balanceNum)} ₽</span>}
+                Залог: <b className="text-ink">{Math.round(sourceValue)} ₽</b>
+                {balanceNum > 0 && <span className="text-ink-soft"> + {Math.round(balanceNum)} ₽</span>}
               </span>
               <span className="text-ink-faint">
                 Цель: <b className="text-ink">{target ? Math.round(target.base_price) : "—"} ₽</b>
               </span>
             </div>
 
+            {/* Visual: source → target */}
+            {source && target && (
+              <div className="mt-4 flex items-center justify-center gap-4 rounded-[4px] border border-[rgb(var(--border))] bg-[rgb(var(--surface-2))] p-4">
+                <div className="flex flex-col items-center gap-1.5">
+                  <ChipImage
+                    name={source.chip_name}
+                    imageUrl={source.image_url}
+                    crop={source.image_crop}
+                    rarity={source.rarity_slug}
+                    size={56}
+                  />
+                  <span className="truncate max-w-[80px] text-[10px] text-ink-faint">{source.chip_name}</span>
+                </div>
+                <ArrowUpRight className="h-5 w-5 shrink-0 text-brand" />
+                <div className="flex flex-col items-center gap-1.5">
+                  <ChipImage
+                    name={target.name}
+                    imageUrl={target.image_url}
+                    crop={target.image_crop}
+                    rarity={target.rarity.slug}
+                    size={56}
+                  />
+                  <span className="truncate max-w-[80px] text-[10px] text-ink-faint">{target.name}</span>
+                </div>
+              </div>
+            )}
+
             <Button
-              className="mt-4 w-full"
+              className="mt-4 w-full justify-center"
               variant="primary"
               size="lg"
               loading={loading}
@@ -151,68 +185,77 @@ export function UpgradesView({
               <Flame className="h-4 w-4" />
               Провести апгрейд
             </Button>
-            <p className="mt-2 text-[11px] text-ink-dim">
-              Апгрейд разрешён даже во время lock. Результат и шанс считаются
-              только на сервере.
+            <p className="mt-1.5 text-[10px] text-ink-dim text-center">
+              Апгрейд разрешён даже во время lock. Результат считается на сервере.
             </p>
           </Panel>
 
+          {/* Value comparison */}
           {source && target && (
-            <Panel className="flex items-center justify-between p-5">
-              <div className="flex items-center gap-4">
+            <Panel className="flex items-center justify-between p-4">
+              <div className="flex items-center gap-3">
                 <ChipImage
                   name={source.chip_name}
                   imageUrl={source.image_url}
                   crop={source.image_crop}
                   rarity={source.rarity_slug}
-                  size={64}
+                  size={48}
                 />
-                <ArrowUpRight className="h-5 w-5 text-brand" />
-                <ChipImage name={target.name} imageUrl={target.image_url} crop={target.image_crop} rarity={target.rarity.slug} size={64} />
+                <ArrowUpRight className="h-4 w-4 text-brand" />
+                <ChipImage
+                  name={target.name}
+                  imageUrl={target.image_url}
+                  crop={target.image_crop}
+                  rarity={target.rarity.slug}
+                  size={48}
+                />
               </div>
               <div className="text-right">
-                <p className="text-[11px] text-ink-faint">Ценность залога</p>
+                <p className="text-[10px] text-ink-faint">Ценность залога</p>
                 <p className="font-display text-lg font-bold tabular text-ink">
                   {fmtNumber(Math.round(sourceValue + balanceNum))} ₽
                 </p>
-                <p className="text-[11px] text-ink-faint">из {fmtNumber(Math.round(target.base_price))} ₽</p>
+                <p className="text-[10px] text-ink-faint">из {fmtNumber(Math.round(target.base_price))} ₽</p>
               </div>
             </Panel>
           )}
         </div>
 
+        {/* Sidebar: history */}
         <Panel>
-          <PanelHeader title="История попыток" />
+          <PanelHeader title="История" />
           {history.length === 0 ? (
             <div className="p-4">
               <EmptyState title="Пока пусто" description="Попытки апгрейда появятся здесь" />
             </div>
           ) : (
-            <div className="flex max-h-[480px] flex-col divide-y divide-panel-border overflow-y-auto">
+            <div className="flex max-h-[500px] flex-col divide-y divide-[rgb(var(--border))] overflow-y-auto">
               {history.map((h) => {
                 const ok = h.attempt[0]?.success;
                 return (
-                  <div key={h.id} className="flex items-center gap-3 px-4 py-3">
+                  <div key={h.id} className="flex items-center gap-2.5 px-3 py-2.5">
                     <span
                       className={cn(
-                        "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[11px] font-bold",
+                        "flex h-6 w-6 shrink-0 items-center justify-center rounded-[3px] text-[11px] font-bold",
                         ok ? "bg-ok/15 text-ok" : "bg-danger/15 text-danger"
                       )}
                     >
                       {ok ? "✓" : "✕"}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-[13px] font-medium text-ink">
+                      <p className="truncate text-[12px] font-medium text-ink">
                         {h.target?.name ?? "—"}
-                        {h.target?.rarity && <RarityBadge slug={h.target.rarity.slug} className="ml-2" />}
+                        {h.target?.rarity && <RarityBadge slug={h.target.rarity.slug} className="ml-1.5" />}
                       </p>
-                      <p className="text-[11px] text-ink-faint">
+                      <p className="text-[10px] text-ink-faint">
                         {fmtDate(h.created_at)} · шанс {h.chance}%
                       </p>
                     </div>
-                    <span className="tabular text-[12px] text-ink-faint">
-                      {h.balance_spent > 0 ? `+${fmtNumber(Math.round(h.balance_spent))} ₽` : ""}
-                    </span>
+                    {h.balance_spent > 0 && (
+                      <span className="shrink-0 tabular text-[10px] text-ink-faint">
+                        +{fmtNumber(Math.round(h.balance_spent))} ₽
+                      </span>
+                    )}
                   </div>
                 );
               })}
@@ -221,6 +264,7 @@ export function UpgradesView({
         </Panel>
       </div>
 
+      {/* Result modal */}
       <Modal
         open={result !== null}
         onClose={() => setResult(null)}
@@ -236,18 +280,18 @@ export function UpgradesView({
           <div className="flex flex-col items-center gap-2 py-4 text-center">
             <span
               className={cn(
-                "flex h-16 w-16 items-center justify-center rounded-full font-display text-2xl font-bold",
+                "flex h-14 w-14 items-center justify-center rounded-full font-display text-2xl font-bold",
                 result.success ? "bg-ok/15 text-ok" : "bg-danger/15 text-danger"
               )}
             >
               {result.success ? "✓" : "✕"}
             </span>
-            <p className="text-sm font-semibold text-ink">
+            <p className="text-[13px] font-semibold text-ink">
               {result.success
-                ? "Апгрейд удался — новая фишка уже в инвентаре (новый 7-дневный lock)"
+                ? "Апгрейд удался — новая фишка в инвентаре (новый 7-дневный lock)"
                 : "Фишка сгорела. Попробуйте ещё раз"}
             </p>
-            <p className="text-[12px] text-ink-faint">Шанс был {result.chance}%</p>
+            <p className="text-[11px] text-ink-faint">Шанс был {result.chance}%</p>
           </div>
         )}
       </Modal>

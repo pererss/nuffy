@@ -1,6 +1,6 @@
 import { AdminShell } from "@/components/admin/admin-nav";
-import { CancelListingButton } from "@/components/admin/cancel-listing-button";
 import { Panel, PanelHeader } from "@/components/ui/misc";
+import { CancelListingButton } from "@/components/admin/cancel-listing-button";
 import { listActiveListings, listRecentSales } from "@/lib/data/admin";
 import { fmtDate, fmtNumber } from "@/lib/utils";
 
@@ -14,60 +14,64 @@ export default async function AdminMarketplacePage() {
 
   return (
     <AdminShell title="Площадка">
-      <Panel className="mb-6">
-        <PanelHeader title="Активные объявления" />
-        <div className="divide-y divide-panel-border">
+      <div className="grid gap-5 lg:grid-cols-2">
+        {/* Active listings */}
+        <Panel>
+          <PanelHeader title="Активные объявления" />
           {listings.length === 0 ? (
-            <p className="px-4 py-3 text-[13px] text-ink-faint">Активных объявлений нет</p>
+            <p className="px-3.5 py-3 text-[13px] text-ink-faint">Активных объявлений нет</p>
           ) : (
-            listings.map((l) => (
-              <div key={l.id} className="flex items-center gap-3 px-4 py-2.5">
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-[13px] font-medium text-ink">
-                    {l.instance?.chip.name ?? "—"}
-                    <span className="ml-2 tabular text-[11px] text-ink-faint">
-                      №{l.instance?.serial}
-                    </span>
-                  </p>
-                  <p className="text-[11px] text-ink-faint">
-                    {l.instance?.owner?.username ?? "—"} · {fmtDate(l.created_at)}
-                  </p>
+            <div className="divide-y divide-[rgb(var(--border))]">
+              {listings.map((l) => (
+                <div key={l.id} className="flex items-center gap-3 px-3.5 py-2">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-[13px] font-medium text-ink">
+                      {l.instance?.chip.name ?? "—"}
+                      <span className="ml-1.5 tabular text-[10px] text-ink-faint">
+                        №{l.instance?.serial}
+                      </span>
+                    </p>
+                    <p className="text-[10px] text-ink-faint">
+                      {l.instance?.owner?.username ?? "—"} · {fmtDate(l.created_at)}
+                    </p>
+                  </div>
+                  <span className="tabular text-[12px] font-bold text-ink shrink-0">
+                    {fmtNumber(Math.round(l.price))} ₽
+                  </span>
+                  <CancelListingButton listingId={l.id} />
                 </div>
-                <span className="tabular text-[13px] font-bold text-ink">
-                  {fmtNumber(Math.round(l.price))} ₽
-                </span>
-                <CancelListingButton listingId={l.id} />
-              </div>
-            ))
+              ))}
+            </div>
           )}
-        </div>
-      </Panel>
+        </Panel>
 
-      <Panel>
-        <PanelHeader title="Последние продажи" />
-        <div className="divide-y divide-panel-border">
+        {/* Recent sales */}
+        <Panel>
+          <PanelHeader title="Последние продажи" />
           {sales.length === 0 ? (
-            <p className="px-4 py-3 text-[13px] text-ink-faint">Продаж пока нет</p>
+            <p className="px-3.5 py-3 text-[13px] text-ink-faint">Продаж пока нет</p>
           ) : (
-            sales.map((s) => (
-              <div key={s.id} className="flex items-center gap-3 px-4 py-2.5">
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-[13px] text-ink">
-                    {s.chip?.name ?? "—"}
-                    <span className="ml-2 tabular text-[11px] text-ink-faint">№{s.instance?.serial}</span>
-                  </p>
-                  <p className="text-[11px] text-ink-faint">
-                    продал: {s.buyer?.username ?? "—"} · {fmtDate(s.created_at)}
-                  </p>
+            <div className="divide-y divide-[rgb(var(--border))]">
+              {sales.map((s) => (
+                <div key={s.id} className="flex items-center gap-3 px-3.5 py-2">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-[13px] text-ink">
+                      {s.chip?.name ?? "—"}
+                      <span className="ml-1.5 tabular text-[10px] text-ink-faint">№{s.instance?.serial}</span>
+                    </p>
+                    <p className="text-[10px] text-ink-faint">
+                      продал: {s.buyer?.username ?? "—"} · {fmtDate(s.created_at)}
+                    </p>
+                  </div>
+                  <span className="tabular text-[12px] font-bold text-ok shrink-0">
+                    +{fmtNumber(Math.round(s.price))} ₽
+                  </span>
                 </div>
-                <span className="tabular text-[13px] font-bold text-ok">
-                  +{fmtNumber(Math.round(s.price))} ₽
-                </span>
-              </div>
-            ))
+              ))}
+            </div>
           )}
-        </div>
-      </Panel>
+        </Panel>
+      </div>
     </AdminShell>
   );
 }

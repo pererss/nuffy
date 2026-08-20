@@ -28,7 +28,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex h-5 items-center gap-1.5 rounded-[5px] px-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.12em]",
+        "inline-flex h-5 items-center gap-1.5 rounded-[3px] px-1.5 font-mono text-[9px] font-bold uppercase tracking-[0.14em]",
         className
       )}
       style={
@@ -36,13 +36,13 @@ export function Badge({
           ? variant
             ? {
                 color: `rgb(${resolvedColor})`,
-                backgroundColor: `rgb(${resolvedColor} / 0.12)`,
-                boxShadow: `inset 0 0 0 1px rgb(${resolvedColor} / 0.35)`,
+                backgroundColor: `rgb(${resolvedColor} / 0.1)`,
+                border: `1px solid rgb(${resolvedColor} / 0.25)`,
               }
             : {
                 color: resolvedColor,
                 backgroundColor: `${resolvedColor}1a`,
-                boxShadow: `inset 0 0 0 1px ${resolvedColor}40`,
+                border: `1px solid ${resolvedColor}40`,
               }
           : undefined
       }
@@ -79,7 +79,7 @@ export function LevelBadge({ level, className }: { level: string; className?: st
   return (
     <span
       className={cn(
-        "inline-flex h-5 items-center rounded-[5px] border border-panel-strong bg-canvas-inset px-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-ink-soft",
+        "inline-flex h-5 items-center rounded-[3px] border border-[rgb(var(--border))] bg-[rgb(var(--surface-2))] px-1.5 font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-ink-soft",
         className
       )}
     >
@@ -90,11 +90,11 @@ export function LevelBadge({ level, className }: { level: string; className?: st
 
 export function LockBadge({ locked }: { locked: boolean }) {
   return locked ? (
-    <span className="inline-flex h-5 items-center gap-1 rounded-[5px] bg-warn/10 px-1.5 font-mono text-[10px] font-bold tracking-[0.14em] text-warn shadow-[inset_0_0_0_1px_rgba(240,135,91,0.35)]">
+    <span className="inline-flex h-5 items-center gap-1 rounded-[3px] bg-warn/10 px-1.5 font-mono text-[9px] font-bold tracking-[0.14em] text-warn border border-warn/25">
       <Lock className="h-3 w-3" /> LOCKED
     </span>
   ) : (
-    <span className="inline-flex h-5 items-center gap-1 rounded-[5px] bg-ok/10 px-1.5 font-mono text-[10px] font-bold tracking-[0.14em] text-ok shadow-[inset_0_0_0_1px_rgba(61,214,140,0.35)]">
+    <span className="inline-flex h-5 items-center gap-1 rounded-[3px] bg-ok/10 px-1.5 font-mono text-[9px] font-bold tracking-[0.14em] text-ok border border-ok/25">
       <Check className="h-3 w-3" /> SELLABLE
     </span>
   );
@@ -110,16 +110,16 @@ export function StatusPill({
   className?: string;
 }) {
   const tones = {
-    ok: "bg-ok/10 text-ok shadow-[inset_0_0_0_1px_rgba(61,214,140,0.35)]",
-    warn: "bg-warn/10 text-warn shadow-[inset_0_0_0_1px_rgba(240,135,91,0.35)]",
-    danger: "bg-danger/10 text-danger shadow-[inset_0_0_0_1px_rgba(242,95,102,0.35)]",
-    info: "bg-info/10 text-info shadow-[inset_0_0_0_1px_rgba(88,166,232,0.35)]",
-    dim: "bg-panel-hover text-ink-faint shadow-[inset_0_0_0_1px_rgba(42,49,66,1)]",
+    ok: "bg-ok/10 text-ok border border-ok/25",
+    warn: "bg-warn/10 text-warn border border-warn/25",
+    danger: "bg-danger/10 text-danger border border-danger/25",
+    info: "bg-info/10 text-info border border-info/25",
+    dim: "bg-[rgb(var(--surface-hover))] text-ink-faint border border-[rgb(var(--border))]",
   };
   return (
     <span
       className={cn(
-        "inline-flex h-5 items-center gap-1 rounded-[5px] px-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.12em]",
+        "inline-flex h-5 items-center gap-1 rounded-[3px] px-1.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em]",
         tones[tone],
         className
       )}

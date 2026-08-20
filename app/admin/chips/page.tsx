@@ -11,9 +11,7 @@ export default async function AdminChipsPage() {
     getCatalog(),
     admin
       .from("chips")
-      .select(
-        "*, collection:collections(name, status), rarity:rarities(id, slug, name, color, sort_order), level:levels(id, name, slug, sort_order, color)"
-      )
+      .select("*, collection:collections(name, status), rarity:rarities(id, slug, name, color, sort_order), level:levels(id, name, slug, sort_order, color)")
       .order("created_at", { ascending: false }),
   ]);
 

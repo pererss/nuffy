@@ -25,8 +25,8 @@ export function CancelListingButton({ listingId }: { listingId: string }) {
   };
 
   return (
-    <Button variant="danger" size="sm" loading={busy} onClick={cancel}>
-      <Ban className="h-3.5 w-3.5" />
+    <Button variant="danger" size="sm" loading={busy} onClick={cancel} className="gap-1">
+      <Ban className="h-3 w-3" />
       Отменить
     </Button>
   );

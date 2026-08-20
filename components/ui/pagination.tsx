@@ -24,20 +24,20 @@ export function Pagination({ pages, current }: { pages: number; current: number 
   }
 
   return (
-    <div className="mt-6 flex items-center justify-center gap-1.5">
+    <div className="mt-5 flex items-center justify-center gap-1">
       <Link
         href={href(current - 1)}
         aria-disabled={current <= 1}
         className={cn(
-          "flex h-8 w-8 items-center justify-center rounded-lg border border-panel-border text-ink-soft transition-colors hover:border-panel-strong hover:text-ink",
+          "flex h-8 w-8 items-center justify-center rounded-[4px] border border-[rgb(var(--border))] text-ink-soft transition-colors hover:border-[rgb(var(--border-strong))] hover:text-ink",
           current <= 1 && "pointer-events-none opacity-40"
         )}
       >
-        <ChevronLeft className="h-4 w-4" />
+        <ChevronLeft className="h-3.5 w-3.5" />
       </Link>
       {items.map((it, i) =>
         it === "…" ? (
-          <span key={`e${i}`} className="px-1 text-ink-dim">
+          <span key={`e${i}`} className="px-1 text-ink-dim text-[13px]">
             …
           </span>
         ) : (
@@ -45,10 +45,10 @@ export function Pagination({ pages, current }: { pages: number; current: number 
             key={it}
             href={href(it)}
             className={cn(
-              "flex h-8 min-w-8 items-center justify-center rounded-lg border px-2 text-[13px] font-medium transition-colors",
+              "flex h-8 min-w-8 items-center justify-center rounded-[4px] border px-2 text-[13px] font-medium transition-colors",
               it === current
-                ? "border-brand/50 bg-brand/10 text-brand"
-                : "border-panel-border text-ink-soft hover:border-panel-strong hover:text-ink"
+                ? "border-[rgb(var(--brand-border))] bg-brand/10 text-brand"
+                : "border-[rgb(var(--border))] text-ink-soft hover:border-[rgb(var(--border-strong))] hover:text-ink"
             )}
           >
             {it}
@@ -59,11 +59,11 @@ export function Pagination({ pages, current }: { pages: number; current: number 
         href={href(current + 1)}
         aria-disabled={current >= pages}
         className={cn(
-          "flex h-8 w-8 items-center justify-center rounded-lg border border-panel-border text-ink-soft transition-colors hover:border-panel-strong hover:text-ink",
+          "flex h-8 w-8 items-center justify-center rounded-[4px] border border-[rgb(var(--border))] text-ink-soft transition-colors hover:border-[rgb(var(--border-strong))] hover:text-ink",
           current >= pages && "pointer-events-none opacity-40"
         )}
       >
-        <ChevronRight className="h-4 w-4" />
+        <ChevronRight className="h-3.5 w-3.5" />
       </Link>
     </div>
   );

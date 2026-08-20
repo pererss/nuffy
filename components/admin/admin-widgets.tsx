@@ -1,123 +1,103 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { Check, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Panel, PanelHeader, StatCard } from "@/components/ui/misc";
 import { Badge } from "@/components/ui/badge";
-import { useToast } from "@/components/ui/toast";
-import { adminResolveRequest } from "@/lib/actions/admin";
 import { fmtDate, fmtNumber } from "@/lib/utils";
 
-export function PendingRequests({
-  requests,
-}: {
-  requests: Array<{
-    id: number;
-    user: { username: string } | null;
-    type: string;
-    amount: number;
-    created_at: string;
-  }>;
-}) {
-  const router = useRouter();
-  const { toast } = useToast();
-  const [busy, setBusy] = useState<number | null>(null);
-
-  const resolve = async (id: number, approve: boolean) => {
-    setBusy(id);
-    const res = await adminResolveRequest(id, approve);
-    setBusy(null);
-    if (res.ok) {
-      toast(approve ? "Заявка одобрена" : "Заявка отклонена", "success");
-      router.refresh();
-    } else {
-      toast(res.error ?? "Ошибка", "error");
-    }
-  };
-
-  if (requests.length === 0) {
-    return <p className="px-4 py-3 text-[13px] text-ink-faint">Нет ожидающих заявок</p>;
-  }
-
+function PendingRequests({ requests }: { requests: Array<{ id: number | string; type: string; amount: number; status: string; created_at: string; user?: { username: string } }> }) {
+  if (requests.length === 0) return <p className="px-4 py-3 text-[13px] text-ink-faint">Заявок пока нет</p>;
   return (
-    <div className="divide-y divide-panel-border">
+    <div className="divide-y divide-[rgb(var(--border))]">
       {requests.map((r) => (
-        <div key={r.id} className="flex items-center gap-3 px-4 py-3">
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-[13px] font-medium text-ink">
-              {r.user?.username ?? "—"}
-              <span className="ml-2 text-ink-faint">
-                {r.type === "deposit" ? "пополнение" : "вывод"}
-              </span>
-            </p>
-            <p className="text-[11px] text-ink-faint">
-              {fmtDate(r.created_at)} · запрос #{r.id}
-            </p>
+        <div key={String(r.id)} className="flex items-center gap-3 px-4 py-2">
+          <StatusBadge status={r.status} />
+          <div className="min-w-0 flex-1 truncate text-[13px] text-ink">
+            {r.user?.username ?? "—"}
+            <span className="ml-2 text-[10px] text-ink-faint">{r.type}</span>
           </div>
-          <span
-            className={
-              r.type === "deposit"
-                ? "tabular text-[14px] font-bold text-ok"
-                : "tabular text-[14px] font-bold text-danger"
-            }
-          >
-            {r.type === "deposit" ? "+" : "−"}{fmtNumber(Math.round(r.amount))} ₽
+          <span className="tabular text-[12px] text-ink-faint shrink-0">
+            {r.amount > 0 ? "+" : "−"}{fmtNumber(Math.round(Math.abs(r.amount)))} ₽
           </span>
-          <div className="flex gap-1.5">
-            <Button
-              size="sm"
-              variant="ok"
-              loading={busy === r.id}
-              onClick={() => resolve(r.id, true)}
-            >
-              <Check className="h-3.5 w-3.5" />
-            </Button>
-            <Button
-              size="sm"
-              variant="danger"
-              loading={busy === r.id}
-              onClick={() => resolve(r.id, false)}
-            >
-              <X className="h-3.5 w-3.5" />
-            </Button>
-          </div>
         </div>
       ))}
     </div>
   );
 }
 
-export function StatCard({
-  label,
-  value,
-  hint,
+function StatusBadge({ status }: { status: string }) {
+  const color = status === "completed" ? "emerald" : status === "rejected" ? "red" : "amber";
+  return <Badge color={color} tone="dot">{status}</Badge>;
+}
+
+export function AdminWidgets({
+  stats,
 }: {
-  label: string;
-  value: string;
-  hint?: string;
+  stats: {
+    users: number;
+    turnover: number;
+    listings: number;
+    pendingRequests: number;
+    packsOpened: number;
+    recentRequests: Array<{ id: number | string; type: string; amount: number; status: string; created_at: string; user?: { username: string } | null }>;
+    recentTxns: Array<{ id: number | string; type: string; amount: number; status: string; created_at: string; user?: { username: string } | null }>;
+  };
 }) {
   return (
-    <div className="rounded-card border border-panel-border bg-panel p-4">
-      <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-faint">
-        {label}
-      </p>
-      <p className="mt-1.5 font-display text-2xl font-bold tabular text-ink">{value}</p>
-      {hint && <p className="mt-1 text-[11px] text-ink-dim">{hint}</p>}
-    </div>
+    <>
+      {/* Stats row */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <StatCard label="Пользователей" value={fmtNumber(stats.users)} />
+        <StatCard label="Оборот" value={`${fmtNumber(stats.turnover)} ₽`} sub="покупки" />
+        <StatCard label="Листингов" value={fmtNumber(stats.listings)} />
+        <StatCard label="Заявки" value={fmtNumber(stats.pendingRequests)} sub="ожидание" />
+        <StatCard label="Открыто паков" value={fmtNumber(stats.packsOpened)} />
+      </div>
+
+      {/* Two columns */}
+      <div className="mt-5 grid gap-5 lg:grid-cols-2">
+        {/* Pending requests */}
+        <Panel>
+          <PanelHeader
+            title="Заявки"
+            right={
+              stats.pendingRequests > 0 ? (
+                <span className="rounded-full bg-warn/15 px-2 py-0.5 text-[10px] font-bold text-warn">
+                  {stats.pendingRequests}
+                </span>
+              ) : null
+            }
+          />
+          <PendingRequests requests={stats.recentRequests as never} />
+        </Panel>
+
+        {/* Recent transactions */}
+        <Panel>
+          <PanelHeader title="Последние операции" />
+          <div className="divide-y divide-[rgb(var(--border))]">
+            {stats.recentTxns.length === 0 ? (
+              <p className="px-4 py-3 text-[13px] text-ink-faint">Операций пока нет</p>
+            ) : (
+              stats.recentTxns.map((t) => (
+                <div key={t.id} className="flex items-center gap-3 px-4 py-2">
+                  <StatusBadge status={t.status} />
+                  <div className="min-w-0 flex-1 truncate text-[13px] text-ink">
+                    {t.user?.username ?? "—"}
+                    <span className="ml-2 text-[10px] text-ink-faint">{t.type}</span>
+                  </div>
+                  <span className="tabular text-[12px] text-ink-faint shrink-0">
+                    {t.amount > 0 ? "+" : "−"}{fmtNumber(Math.round(Math.abs(t.amount)))} ₽
+                  </span>
+                  <span className="hidden text-[10px] text-ink-dim sm:block">
+                    {fmtDate(t.created_at)}
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
+        </Panel>
+      </div>
+    </>
   );
 }
 
-export function StatusBadge({ status }: { status: string }) {
-  const map: Record<string, "ok" | "warn" | "info" | "danger" | "neutral"> = {
-    completed: "ok",
-    pending: "warn",
-    cancelled: "neutral",
-    rejected: "danger",
-    deposit: "ok",
-    withdraw: "danger",
-    listed: "ok",
-    sold: "info",
-  };
-  return <Badge variant={map[status] ?? "neutral"}>{status}</Badge>;
-}
+export { PendingRequests, StatusBadge };

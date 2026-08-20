@@ -59,12 +59,12 @@ export function MarketplaceFilters({
   };
 
   return (
-    <div className="panel mb-5 flex flex-col gap-3 p-3">
+    <div className="panel mb-4 flex flex-col gap-2.5 p-3">
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-dim" />
+          <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-dim" />
           <Input
-            className="pl-9"
+            className="pl-8 h-9 text-[13px]"
             placeholder="Поиск фишек…"
             value={q}
             onChange={(e) => setQ(e.target.value)}
@@ -72,6 +72,7 @@ export function MarketplaceFilters({
           />
         </div>
         <Select
+          className="h-9 text-[13px]"
           value={sort}
           onChange={(e) => push({ sort: e.target.value })}
         >
@@ -81,23 +82,24 @@ export function MarketplaceFilters({
             </option>
           ))}
         </Select>
-        <Select value={rarity} onChange={(e) => push({ rarity: e.target.value })}>
+        <Select
+          className="h-9 text-[13px]"
+          value={rarity}
+          onChange={(e) => push({ rarity: e.target.value })}
+        >
           <option value="">Все редкости</option>
           {rarities.map((r) => (
-            <option key={r.id} value={r.slug}>
-              {r.name}
-            </option>
+            <option key={r.id} value={r.slug}>{r.name}</option>
           ))}
         </Select>
         <Select
+          className="h-9 text-[13px]"
           value={collection}
           onChange={(e) => push({ collection: e.target.value })}
         >
           <option value="">Все коллекции</option>
           {collections.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
+            <option key={c.id} value={c.id}>{c.name}</option>
           ))}
         </Select>
       </div>

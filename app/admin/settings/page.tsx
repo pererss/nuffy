@@ -31,12 +31,8 @@ export default async function AdminSettingsPage() {
             trades_enabled: system.trades_enabled !== false,
             upgrades_enabled: system.upgrades_enabled !== false,
           },
-          marketplace: {
-            fee_percent: Number(marketplace.fee_percent ?? 0),
-          },
-          economy: {
-            upgrade_source_multiplier: Number(economy.upgrade_source_multiplier ?? 0.9),
-          },
+          marketplace: { fee_percent: Number(marketplace.fee_percent ?? 0) },
+          economy: { upgrade_source_multiplier: Number(economy.upgrade_source_multiplier ?? 0.9) },
         }}
       />
     </AdminShell>

@@ -15,7 +15,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
-const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,29 +45,36 @@ const [loading, setLoading] = useState(false);
 
   return (
     <div className="relative flex min-h-[70vh] items-center justify-center overflow-hidden">
+      {/* Background */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          background:
-            "radial-gradient(42rem 42rem at 50% -12%, rgb(var(--brand) / 0.14), transparent 60%)",
+          background: "radial-gradient(42rem 42rem at 50% -12%, rgb(var(--brand) / 0.14), transparent 60%)",
         }}
       />
-      <div className="panel relative w-full max-w-sm p-8">
+
+      {/* Register card */}
+      <div className="panel relative w-full max-w-sm p-6">
+        {/* Logo */}
         <div className="mb-5 flex flex-col items-center gap-1 text-center">
           <span className="font-display text-2xl font-extrabold tracking-tight text-ink">
             NUFFY
           </span>
-          <span className="text-[10px] uppercase tracking-[0.32em] text-ink-dim">
+          <span className="text-[9px] uppercase tracking-[0.32em] text-ink-dim">
             цифровая коллекция
           </span>
         </div>
-        <h1 className="font-display text-xl font-bold tracking-tight text-ink">
+
+        <h1 className="flex items-center gap-2 font-display text-[17px] font-bold tracking-tight text-ink">
+          <span className="inline-block h-2.5 w-2.5 rounded-[2px] border-1.5 border-brand" />
           Регистрация
         </h1>
         <p className="mt-1 text-[13px] text-ink-faint">
           Создайте аккаунт — ваш ID присвоится автоматически
         </p>
-        <form onSubmit={submit} className="mt-6 flex flex-col gap-4">
+
+        {/* Form */}
+        <form onSubmit={submit} className="mt-5 flex flex-col gap-3">
           <Field label="Username">
             <Input
               required
@@ -111,7 +118,9 @@ const [loading, setLoading] = useState(false);
             Создать аккаунт
           </Button>
         </form>
-        <p className="mt-5 text-center text-[13px] text-ink-faint">
+
+        {/* Login link */}
+        <p className="mt-4 text-center text-[13px] text-ink-faint">
           Уже есть аккаунт?{" "}
           <Link href="/login" className="text-brand hover:text-brand-hover">
             Войти

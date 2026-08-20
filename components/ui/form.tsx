@@ -33,7 +33,7 @@ export function Select({
   return (
     <select
       className={cn(
-        "input-base appearance-none cursor-pointer pr-8 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%237C8595%22 stroke-width=%222.5%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22m6 9 6 6 6-6%22/></svg>')] bg-[position:right_0.65rem_center] bg-no-repeat",
+        "input-base appearance-none cursor-pointer pr-7 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23828AA0%22 stroke-width=%222.5%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22m6 9 6 6 6-6%22/></svg>')] bg-[position:right_0.6rem_center] bg-no-repeat",
         className
       )}
       {...props}
@@ -89,12 +89,12 @@ export function Switch({
       role="switch"
       aria-checked={checked}
       onClick={() => onChange(!checked)}
-      className="flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded-lg"
+      className="flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand))]/40 rounded-[4px]"
     >
       <span
         className={cn(
           "relative h-5 w-9 rounded-full transition-colors duration-150",
-          checked ? "bg-brand" : "bg-panel-strong"
+          checked ? "bg-brand" : "bg-[rgb(var(--border-strong))]"
         )}
       >
         <span
@@ -124,14 +124,14 @@ export function Checkbox({
       role="checkbox"
       aria-checked={checked}
       onClick={() => onChange(!checked)}
-      className="flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded-lg"
+      className="flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--brand))]/40 rounded-[4px]"
     >
       <span
         className={cn(
-          "flex h-4.5 w-4.5 h-[18px] w-[18px] items-center justify-center rounded border transition-colors",
+          "flex h-[18px] w-[18px] items-center justify-center rounded-[3px] border transition-colors",
           checked
             ? "border-brand bg-brand text-black"
-            : "border-panel-strong bg-canvas-inset"
+            : "border-[rgb(var(--border-strong))] bg-[rgb(var(--surface-2))]"
         )}
       >
         {checked && (

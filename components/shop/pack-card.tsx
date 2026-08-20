@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Sparkles } from "lucide-react";
@@ -29,36 +30,32 @@ export function PackCard({
     <>
       <button
         onClick={() => setOpen(true)}
-        className="panel group relative flex flex-col overflow-hidden text-left card-lift hover:border-brand/40 hover:shadow-glow"
+        className="panel group relative flex flex-col overflow-hidden text-left card-lift"
       >
-        <div className="animate-shimmer relative flex h-36 items-center justify-center overflow-hidden">
+        <div className="relative h-32 overflow-hidden bg-[rgb(var(--surface-2))]">
           {pack.image_url ? (
-            <img src={pack.image_url} alt={pack.name} className="h-full w-full object-cover" />
+            <img src={pack.image_url} alt={pack.name} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
           ) : (
-            <span
-              className="absolute inset-0"
-              style={{
-                background:
-                  "radial-gradient(circle at 30% 20%, rgb(var(--surface-hover)), rgb(var(--bg)) 70%)",
-              }}
-            >
-              <span className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(240,185,59,0.12),transparent_60%)]" />
+            <span className="absolute inset-0 bg-gradient-to-br from-[rgb(var(--surface-3))] to-[rgb(var(--surface-2))]">
+              <span className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(160,110,255,0.08),transparent_60%)]" />
             </span>
           )}
-          <span className="tech-label absolute left-3 top-2.5 text-ink-dim">PACK // {pack.name.slice(0, 12).toUpperCase()}</span>
-          <div className="absolute right-3 top-3 flex h-7 items-center gap-1.5 rounded-md bg-black/60 px-2 backdrop-blur">
-            <Sparkles className="h-3.5 w-3.5 text-brand" />
+          <span className="tech-label absolute left-2.5 top-2 text-[ink-dim]">
+            PACK // {pack.name.slice(0, 12).toUpperCase()}
+          </span>
+          <div className="absolute right-2.5 top-2.5 flex h-7 items-center gap-1.5 rounded-[3px] bg-[rgb(var(--surface))]/90 backdrop-blur px-2">
+            <Sparkles className="h-3 w-3 text-brand" />
             <span className="font-mono text-[12px] font-bold text-ink">{fmtPrice(pack.price)}</span>
           </div>
-          <span className="absolute bottom-3 left-3 rounded-md bg-black/60 px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-ink-soft backdrop-blur">
-            {pack.available_count !== null
-              ? `Осталось: ${pack.available_count - pack.opened_count}`
-              : "Без лимита"}
-          </span>
+          {pack.available_count !== null && (
+            <span className="absolute bottom-2 left-2.5 rounded-[3px] bg-[rgb(var(--surface))]/90 px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider text-ink-faint backdrop-blur">
+              Осталось: {pack.available_count - pack.opened_count}
+            </span>
+          )}
         </div>
-        <div className="flex flex-col gap-0.5 px-3.5 pb-3.5 pt-3">
-          <span className="font-display text-sm font-bold text-ink">{pack.name}</span>
-          <span className="line-clamp-2 text-[12px] text-ink-faint">
+        <div className="flex flex-col gap-0.5 px-3 pb-3 pt-2.5">
+          <span className="font-display text-[13px] font-bold text-ink">{pack.name}</span>
+          <span className="line-clamp-2 text-[11px] text-ink-faint leading-relaxed">
             {pack.description}
           </span>
         </div>
@@ -158,18 +155,19 @@ function PackOpenModal({
         <div className="flex flex-col gap-2.5">
           <p className="text-[13px] text-ink-soft">{pack.description}</p>
           {version && (
-            <div className="flex flex-col gap-1.5 rounded-lg border border-panel-border bg-canvas-inset p-3">
+            <div className="flex flex-col gap-1.5 rounded-[4px] border border-[rgb(var(--border))] bg-[rgb(var(--surface-2))] p-3">
               {version.config.tiers.map((t) => (
                 <div key={t.tier_id} className="flex items-center gap-2 text-[12px]">
-                  <span className="flex-1 text-ink-soft">Тир «{t.name ?? `#${t.tier_id}`}» — {t.weight}%</span>
+                  <span className="flex-1 text-ink-soft">
+                    Тир «{t.name ?? `#${t.tier_id}`}» — {t.weight}%
+                  </span>
                   <span className="text-ink-faint">фишек: {chipsInTier(t.tier_id)}</span>
                 </div>
               ))}
             </div>
           )}
           <p className="text-[11px] text-ink-dim">
-            Выпадение определяется на сервере по фиксированным вероятностям
-            конфигурации пака.
+            Выпадение определяется на сервере по фиксированным вероятностям конфигурации пака.
           </p>
         </div>
       )}

@@ -10,10 +10,12 @@ import {
   Package,
   Store,
   ArrowLeftRight,
+  ArrowLeftRight as Trades,
   Ticket,
   Ban,
   ScrollText,
   Settings,
+  Flame,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -24,6 +26,8 @@ const items = [
   { href: "/admin/chips", label: "Фишки", icon: CircleDot },
   { href: "/admin/packs", label: "Паки", icon: Package },
   { href: "/admin/marketplace", label: "Площадка", icon: Store },
+  { href: "/admin/trades", label: "Обмены", icon: Trades },
+  { href: "/admin/upgrades", label: "Апгрейды", icon: Flame },
   { href: "/admin/transactions", label: "Транзакции", icon: ArrowLeftRight },
   { href: "/admin/promocodes", label: "Промокоды", icon: Ticket },
   { href: "/admin/blocks", label: "Блокировки", icon: Ban },
@@ -35,8 +39,13 @@ export function AdminNav() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-56 shrink-0 border-r border-panel-border">
-      <nav className="sticky top-14 flex flex-col gap-0.5 p-3">
+    <aside className="w-52 shrink-0 border-r border-[rgb(var(--border))] bg-[rgb(var(--surface))]">
+      <nav className="sticky top-0 flex flex-col gap-0.5 p-2.5">
+        {/* Admin label */}
+        <span className="mb-2 px-2.5 font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-ink-dim">
+          NUFFY ADMIN
+        </span>
+
         {items.map((it) => {
           const active =
             pathname === it.href || pathname.startsWith(`${it.href}/`);
@@ -45,23 +54,29 @@ export function AdminNav() {
               key={it.href}
               href={it.href}
               className={cn(
-                "flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium transition-colors",
+                "flex items-center gap-2 rounded-[4px] px-2.5 py-1.5 text-[12px] font-medium transition-colors",
                 active
-                  ? "bg-panel-hover text-ink"
-                  : "text-ink-faint hover:bg-panel-hover/60 hover:text-ink-soft"
+                  ? "bg-brand/10 text-brand"
+                  : "text-ink-faint hover:bg-[rgb(var(--surface-hover))] hover:text-ink-soft"
               )}
             >
-              <it.icon className="h-4 w-4" />
+              <it.icon className={cn(
+                "h-3.5 w-3.5 shrink-0",
+                active ? "text-brand" : "text-ink-dim"
+              )} />
               {it.label}
             </Link>
           );
         })}
-        <div className="my-2 h-px bg-panel-border" />
+
+        <div className="my-1.5 h-px bg-[rgb(var(--border))]" />
+
         <Link
           href="/shop"
-          className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-ink-dim hover:bg-panel-hover/60 hover:text-ink-soft"
+          className="flex items-center gap-2 rounded-[4px] px-2.5 py-1.5 text-[12px] font-medium text-ink-dim transition-colors hover:bg-[rgb(var(--surface-hover))] hover:text-ink-soft"
         >
-          ← На сайт
+          <ArrowLeftRight className="h-3.5 w-3.5 shrink-0 text-ink-dim" />
+          На сайт
         </Link>
       </nav>
     </aside>
@@ -70,10 +85,10 @@ export function AdminNav() {
 
 export function AdminShell({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="flex min-h-[calc(100vh-56px)]">
+    <div className="flex min-h-[calc(100vh-56px)] bg-[rgb(var(--bg))]">
       <AdminNav />
-      <main className="min-w-0 flex-1 px-5 py-5 sm:px-6">
-        <h1 className="mb-4 font-display text-xl font-bold text-ink">{title}</h1>
+      <main className="min-w-0 flex-1 px-5 py-5 sm:px-6 lg:px-8">
+        <h1 className="mb-4 font-display text-[17px] font-bold tracking-tight text-ink">{title}</h1>
         {children}
       </main>
     </div>

@@ -101,8 +101,8 @@ export function ChipImage({
           transformStyle: "preserve-3d",
           transition: dragging ? "none" : "transform 0.45s cubic-bezier(.2,.8,.2,1)",
           boxShadow: ring
-            ? `0 0 0 2px ${color}cc, 0 0 20px -2px ${color}66, inset 0 0 0 2px rgba(255,255,255,0.18), 0 10px 26px -10px rgba(0,0,0,0.4)`
-            : "0 10px 26px -12px rgba(0,0,0,0.45)",
+            ? `0 0 0 1.5px ${color}55, 0 0 16px -2px ${color}33, inset 0 0 0 1.5px rgba(255,255,255,0.08), 0 8px 20px -8px rgba(0,0,0,0.5)`
+            : "0 8px 20px -10px rgba(0,0,0,0.5)",
         }}
       >
         {hasImage ? (
@@ -121,7 +121,7 @@ export function ChipImage({
         ) : (
           <span
             className="absolute inset-0 flex items-center justify-center"
-            style={{ background: "linear-gradient(150deg, var(--surface-2), var(--bg))" }}
+            style={{ background: "linear-gradient(150deg, rgb(var(--surface-2)), rgb(var(--bg)))" }}
           >
             <span
               className="text-[12px] font-bold uppercase tracking-wider"
@@ -132,19 +132,21 @@ export function ChipImage({
           </span>
         )}
 
+        {/* Gloss overlay */}
         <span
           className="pointer-events-none absolute inset-0 rounded-full"
           style={{
             background: `radial-gradient(120% 120% at ${50 - rot.y * 0.7}% ${
               38 - rot.x * 0.7
-            }%, rgba(255,255,255,0.32), transparent 46%)`,
+            }%, rgba(255,255,255,0.18), transparent 46%)`,
           }}
         />
+        {/* Inner shadow for depth */}
         <span
           className="pointer-events-none absolute inset-0 rounded-full"
           style={{
             boxShadow:
-              "inset 0 -12px 24px rgba(0,0,0,0.28), inset 0 3px 12px rgba(255,255,255,0.14)",
+              "inset 0 -10px 20px rgba(0,0,0,0.35), inset 0 2px 8px rgba(255,255,255,0.06)",
           }}
         />
       </span>

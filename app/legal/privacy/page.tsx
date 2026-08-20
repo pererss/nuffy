@@ -35,7 +35,7 @@ export default function PrivacyPage() {
         <h3>4. Связь с нами</h3>
         <p>
           По вопросам обработки данных пишите на{" "}
-          <a href="mailto:nuffysup@gmail.com">nuffysup@gmail.com</a>.
+          <a href="mailto:nuffysup@gmail.com" className="text-brand hover:underline">nuffysup@gmail.com</a>.
         </p>
       </div>
     </LegalLayout>

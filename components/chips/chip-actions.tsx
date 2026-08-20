@@ -29,21 +29,18 @@ export function FavoriteButton({
         setLoading(true);
         const res = await toggleFavorite(chipId);
         setLoading(false);
-        if (res.ok) {
-          router.refresh();
-        } else {
-          toast(res.error, "error");
-        }
+        if (res.ok) router.refresh();
+        else toast(res.error, "error");
       }}
       disabled={loading}
       className={cn(
-        "inline-flex h-10 items-center gap-2 rounded-lg border px-4 text-sm font-medium transition-colors",
+        "inline-flex h-9 items-center gap-1.5 rounded-[4px] border px-3 text-[13px] font-medium transition-all btn-press",
         liked
-          ? "border-danger/40 bg-danger/10 text-danger"
-          : "border-panel-border text-ink-soft hover:border-danger/40 hover:text-danger"
+          ? "border-danger/30 bg-danger/10 text-danger"
+          : "border-[rgb(var(--border))] text-ink-soft hover:border-danger/30 hover:text-danger"
       )}
     >
-      <Heart className={cn("h-4 w-4", liked && "fill-current")} />
+      <Heart className={cn("h-3.5 w-3.5", liked && "fill-current")} />
       {liked ? "В избранном" : "В избранное"}
     </button>
   );
@@ -79,14 +76,14 @@ export function BuyChipBig({
 
   if (stock <= 0) {
     return (
-      <span className="inline-flex h-11 items-center rounded-xl border border-panel-border px-5 text-sm text-ink-dim">
+      <span className="inline-flex h-11 w-full items-center justify-center rounded-[5px] border border-[rgb(var(--border))] bg-[rgb(var(--surface-2))] px-5 text-[13px] text-ink-dim font-medium">
         Распродано
       </span>
     );
   }
 
   return (
-    <Button variant="primary" size="lg" onClick={buy} loading={loading}>
+    <Button variant="primary" size="lg" onClick={buy} loading={true} className="w-full justify-center">
       Купить за {fmtPrice(price)}
     </Button>
   );
@@ -163,7 +160,7 @@ export function SellChipModal({
         }
       >
         {!allowed ? (
-          <div className="flex flex-col gap-1.5 rounded-lg border border-warn/40 bg-warn/10 p-3.5 text-[13px] text-warn">
+          <div className="flex flex-col gap-1.5 rounded-[4px] border border-warn/30 bg-warn/8 p-3 text-[13px] text-warn">
             <p className="font-semibold">Продажа недоступна</p>
             {listed && <p>Причина: фишка уже выставлена на площадке</p>}
             {!listed && locked && (
@@ -235,7 +232,7 @@ export function BuyListingButton({
   };
 
   return (
-    <Button variant="primary" size="lg" onClick={doBuy} loading={loading}>
+    <Button variant="primary" size="lg" onClick={doBuy} loading={loading} className="w-full justify-center">
       {confirm ? "Подтвердить?" : `Купить за ${fmtPrice(price)}`}
     </Button>
   );
@@ -245,9 +242,9 @@ export function LinkToUpgrade({ href, label }: { href: string; label?: string })
   return (
     <Link
       href={href}
-      className="inline-flex h-10 items-center gap-2 rounded-lg border border-panel-border px-4 text-sm font-medium text-ink-soft transition-colors hover:border-brand/40 hover:text-brand"
+      className="inline-flex h-9 items-center gap-1.5 rounded-[4px] border border-[rgb(var(--border))] px-3 text-[13px] font-medium text-ink-soft transition-colors hover:border-[rgb(var(--brand-border))] hover:text-brand btn-press"
     >
-      <ArrowUpRight className="h-4 w-4" />
+      <ArrowUpRight className="h-3.5 w-3.5" />
       {label ?? "Апгрейд"}
     </Link>
   );

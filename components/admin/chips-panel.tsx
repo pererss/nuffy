@@ -37,17 +37,10 @@ export function ChipsPanel({
   const { toast } = useToast();
 
   const collectionFilter = searchParams.get("collection") ?? "";
-
   const [editing, setEditing] = useState<typeof chips[number] | "new" | null>(null);
   const [form, setForm] = useState({
-    name: "",
-    collection_id: "",
-    rarity_id: "",
-    level_id: "",
-    number: "",
-    base_price: "",
-    total_minted: "",
-    status: "active",
+    name: "", collection_id: "", rarity_id: "", level_id: "",
+    number: "", base_price: "", total_minted: "", status: "active" as "active" | "disabled" | "draft",
   });
   const [image, setImage] = useState<{ url: string; crop: { x: number; y: number; zoom: number } } | null>(null);
   const [busy, setBusy] = useState(false);
@@ -59,34 +52,13 @@ export function ChipsPanel({
     setImage(null);
     setForm(
       c === "new"
-        ? {
-            name: "",
-            collection_id: collectionFilter || collections[0]?.id || "",
-            rarity_id: rarities[0]?.id || "",
-            level_id: levels[0]?.id || "",
-            number: "",
-            base_price: "",
-            total_minted: "",
-            status: "active",
-          }
-        : {
-            name: c.name,
-            collection_id: c.collection_id,
-            rarity_id: c.rarity_id,
-            level_id: c.level_id,
-            number: String(c.number),
-            base_price: String(c.base_price),
-            total_minted: String(c.total_minted),
-            status: c.status,
-          }
+        ? { name: "", collection_id: collectionFilter || collections[0]?.id || "", rarity_id: rarities[0]?.id || "", level_id: levels[0]?.id || "", number: "", base_price: "", total_minted: "", status: "active" }
+        : { name: c.name, collection_id: c.collection_id, rarity_id: c.rarity_id, level_id: c.level_id, number: String(c.number), base_price: String(c.base_price), total_minted: String(c.total_minted), status: c.status }
     );
   };
 
   const save = async () => {
-    if (!form.name.trim()) {
-      toast("Название обязательно", "warning");
-      return;
-    }
+    if (!form.name.trim()) { toast("Название обязательно", "warning"); return; }
     setBusy(true);
     const res = await adminSaveChip({
       id: editing === "new" ? "new" : (editing as typeof chips[number]).id,
@@ -94,141 +66,99 @@ export function ChipsPanel({
       collection_id: form.collection_id,
       rarity_id: form.rarity_id,
       level_id: form.level_id,
-      number: parseInt(form.number) || 1,
+      number: parseInt(form.number) || 0,
       base_price: parseFloat(form.base_price) || 0,
       total_minted: parseInt(form.total_minted) || 0,
-      status: form.status as ChipWithMeta["status"],
+      status: form.status as "active" | "disabled" | "draft",
       image_url: image?.url ?? (editing === "new" ? null : (editing as typeof chips[number]).image_url),
-      image_crop: image?.crop ??
-        (editing === "new"
-          ? { x: 0.5, y: 0.5, zoom: 1 }
-          : (editing as typeof chips[number]).image_crop),
+      image_crop: image?.crop ?? (editing === "new" ? undefined : (editing as typeof chips[number]).image_crop),
     });
     setBusy(false);
-    if (res.ok) {
-      toast("Сохранено", "success");
-      setEditing(null);
-      router.refresh();
-    } else {
-      toast(res.error ?? "Ошибка", "error");
-    }
+    if (res.ok) { toast("Сохранено", "success"); setEditing(null); router.refresh(); }
+    else toast(res.error ?? "Ошибка", "error");
   };
 
-  const remove = async () => {
-    if (!editing || editing === "new") return;
+  const remove = async (c: typeof chips[number]) => {
     setBusy(true);
-    const res = await adminDeleteChip(editing.id);
+    const res = await adminDeleteChip(c.id);
     setBusy(false);
-    if (res.ok) {
-      toast("Фишка скрыта", "success");
-      setEditing(null);
-      router.refresh();
-    } else {
-      toast(res.error ?? "Ошибка", "error");
-    }
+    if (res.ok) { toast("Удалено", "success"); router.refresh(); }
+    else toast(res.error ?? "Ошибка", "error");
   };
 
   return (
     <div>
-      <div className="mb-4 flex flex-wrap items-center gap-3">
+      {/* Collection filter */}
+      <div className="mb-4 flex items-center gap-2">
         <Select
-          className="w-64"
+          className="w-48 h-9 text-[13px]"
           value={collectionFilter}
           onChange={(e) => {
             const sp = new URLSearchParams(searchParams.toString());
-            if (e.target.value) sp.set("collection", e.target.value);
-            else sp.delete("collection");
+            e.target.value ? sp.set("collection", e.target.value) : sp.delete("collection");
+            sp.delete("page");
             router.push(`${pathname}?${sp.toString()}`);
           }}
         >
           <option value="">Все коллекции</option>
           {collections.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
+            <option key={c.id} value={c.id}>{c.name}</option>
           ))}
         </Select>
-        <span className="text-[12px] text-ink-faint">{fmtNumber(list.length)} фишек</span>
-        <Button variant="primary" size="sm" className="ml-auto" onClick={() => open("new")}>
-          <Plus className="h-4 w-4" />
+        <Button variant="primary" size="sm" onClick={() => open("new")} className="gap-1.5">
+          <Plus className="h-3.5 w-3.5" />
           Новая фишка
         </Button>
       </div>
 
-      <div className="overflow-x-auto rounded-card border border-panel-border">
-        <table className="w-full min-w-[860px] text-left text-[13px]">
-          <thead>
-            <tr className="border-b border-panel-border bg-panel-hover/50 text-[11px] uppercase tracking-wider text-ink-faint">
-              <th className="px-3 py-2.5 font-semibold">Фишка</th>
-              <th className="px-3 py-2.5 font-semibold">Коллекция</th>
-              <th className="px-3 py-2.5 font-semibold">Редкость</th>
-              <th className="px-3 py-2.5 font-semibold">Цена</th>
-              <th className="px-3 py-2.5 font-semibold">Тираж</th>
-              <th className="px-3 py-2.5 font-semibold">Продано</th>
-              <th className="px-3 py-2.5 font-semibold">Статус</th>
-              <th className="px-3 py-2.5 text-right font-semibold">Действия</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-panel-border">
-            {list.length === 0 ? (
-              <tr>
-                <td colSpan={8} className="px-3 py-6 text-center text-ink-faint">
-                  Фишек нет
-                </td>
+      <div className="panel overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[800px] text-[13px]">
+            <thead>
+              <tr className="border-b border-[rgb(var(--border))] bg-[rgb(var(--surface-2))]">
+                <th className="px-3 py-2 text-left font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-ink-faint">Фишка</th>
+                <th className="px-3 py-2 text-left font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-ink-faint">Коллекция</th>
+                <th className="px-3 py-2 text-left font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-ink-faint">Редкость</th>
+                <th className="px-3 py-2 text-left font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-ink-faint">Цена</th>
+                <th className="px-3 py-2 text-left font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-ink-faint">Тираж</th>
+                <th className="px-3 py-2 text-left font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-ink-faint">Статус</th>
+                <th className="px-3 py-2 w-16"></th>
               </tr>
-            ) : (
-              list.map((c) => (
-                <tr key={c.id} className="hover:bg-panel-hover/40">
+            </thead>
+            <tbody className="divide-y divide-[rgb(var(--border))]">
+              {list.map((c) => (
+                <tr key={c.id} className="transition-colors hover:bg-[rgb(var(--surface-hover))]/50">
                   <td className="px-3 py-2">
-                    <div className="flex items-center gap-3">
-                      <ChipImage
-                        name={c.name}
-                        imageUrl={c.image_url}
-                        crop={c.image_crop}
-                        rarity={c.rarity?.slug ?? "common"}
-                        size={40}
-                      />
+                    <div className="flex items-center gap-2.5">
+                      <ChipImage name={c.name} imageUrl={c.image_url} crop={c.image_crop} rarity={c.rarity.slug} size={36} />
                       <div>
-                        <p className="font-medium text-ink">{c.name}</p>
-                        <p className="text-[11px] text-ink-faint">№{c.number}</p>
+                        <span className="font-medium text-ink">{c.name}</span>
+                        <span className="block text-[10px] text-ink-faint">№{c.number}</span>
                       </div>
                     </div>
                   </td>
-                  <td className="px-3 py-2.5 text-ink-soft">{c.collection?.name ?? "—"}</td>
-                  <td className="px-3 py-2.5 text-ink-soft">{c.rarity?.name ?? "—"}</td>
-                  <td className="px-3 py-2.5 tabular text-ink">{fmtNumber(Math.round(c.base_price))} ₽</td>
-                  <td className="px-3 py-2.5 tabular text-ink-faint">{fmtNumber(c.total_minted)}</td>
-                  <td className="px-3 py-2.5 tabular text-ink-faint">{fmtNumber(c.sold_count)}</td>
-                  <td className="px-3 py-2.5">
-                    <Badge
-                      variant={
-                        c.status === "active"
-                          ? c.sold_count >= c.total_minted
-                            ? "warn"
-                            : "ok"
-                          : "neutral"
-                      }
-                    >
-                      {c.status}
-                    </Badge>
+                  <td className="px-3 py-2 text-ink-soft">{c.collection?.name ?? "—"}</td>
+                  <td className="px-3 py-2"><Badge color={c.rarity.color} tone="dot">{c.rarity.name}</Badge></td>
+                  <td className="px-3 py-2 tabular text-ink font-medium">{fmtNumber(c.base_price)} ₽</td>
+                  <td className="px-3 py-2 tabular text-ink-faint">{fmtNumber(c.total_minted)}</td>
+                  <td className="px-3 py-2">
+                    <Badge variant={c.status === "active" ? "ok" : "neutral"}>{c.status}</Badge>
                   </td>
-                  <td className="px-3 py-2.5 text-right">
-                    <div className="flex items-center justify-end gap-1">
-                      <Button variant="ghost" size="sm" onClick={() => open(c)}>
-                        <Pencil className="h-3.5 w-3.5" />
+                  <td className="px-3 py-2">
+                    <div className="flex items-center justify-end gap-0.5">
+                      <Button variant="ghost" size="sm" onClick={() => open(c)} className="h-7 w-7 p-0">
+                        <Pencil className="h-3 w-3" />
                       </Button>
-                      {c.status !== "disabled" && (
-                        <Button variant="ghost" size="sm" onClick={() => open(c)}>
-                          <Trash2 className="h-3.5 w-3.5 text-danger" />
-                        </Button>
-                      )}
+                      <Button variant="ghost" size="sm" onClick={() => remove(c)} className="h-7 w-7 p-0">
+                        <Trash2 className="h-3 w-3 text-danger" />
+                      </Button>
                     </div>
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <Modal
@@ -239,112 +169,62 @@ export function ChipsPanel({
         actions={
           <>
             {editing && editing !== "new" && (
-              <Button
-                variant="danger"
-                size="sm"
-                loading={busy}
-                className="mr-auto"
-                onClick={remove}
-              >
+              <Button variant="danger" size="sm" loading={busy} className="mr-auto" onClick={() => remove(editing)}>
                 <Trash2 className="h-3.5 w-3.5" />
-                Скрыть
+                Удалить
               </Button>
             )}
-            <Button variant="ghost" size="sm" onClick={() => setEditing(null)}>
-              Отмена
-            </Button>
-            <Button variant="primary" size="sm" loading={busy} onClick={save}>
-              Сохранить
-            </Button>
+            <Button variant="ghost" size="sm" onClick={() => setEditing(null)}>Отмена</Button>
+            <Button variant="primary" size="sm" loading={busy} onClick={save}>Сохранить</Button>
           </>
         }
       >
-        <div className="grid gap-4 sm:grid-cols-[240px_1fr]">
+        <div className="grid gap-4 sm:grid-cols-[220px_1fr]">
           <CropImage
             bucket="chips"
             folder={editing === "new" ? "chips/new" : `chips/${(editing as typeof chips[number]).id}`}
             value={image?.url ?? (editing === "new" ? null : (editing as typeof chips[number]).image_url)}
-            crop={image?.crop ?? (editing === "new" ? null : (editing as typeof chips[number]).image_crop)}
+            crop={image?.crop ?? null}
             onChange={(c) => setImage(c)}
           />
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3">
             <Field label="Название">
-              <Input
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-              />
+              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
             </Field>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Коллекция">
-                <Select
-                  value={form.collection_id}
-                  onChange={(e) => setForm({ ...form, collection_id: e.target.value })}
-                >
-                  {collections.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
+                <Select value={form.collection_id} onChange={(e) => setForm({ ...form, collection_id: e.target.value })}>
+                  <option value="">Выберите…</option>
+                  {collections.map((c) => (<option key={c.id} value={c.id}>{c.name}</option>))}
+                </Select>
+              </Field>
+              <Field label="Редкость">
+                <Select value={form.rarity_id} onChange={(e) => setForm({ ...form, rarity_id: e.target.value })}>
+                  <option value="">Выберите…</option>
+                  {rarities.map((r) => (<option key={r.id} value={r.id}>{r.name}</option>))}
+                </Select>
+              </Field>
+              <Field label="Уровень">
+                <Select value={form.level_id} onChange={(e) => setForm({ ...form, level_id: e.target.value })}>
+                  <option value="">Выберите…</option>
+                  {levels.map((l) => (<option key={l.id} value={l.id}>{l.name}</option>))}
                 </Select>
               </Field>
               <Field label="Номер">
-                <Input
-                  type="number"
-                  min={1}
-                  value={form.number}
-                  onChange={(e) => setForm({ ...form, number: e.target.value })}
-                />
-              </Field>
-              <Field label="Редкость">
-                <Select
-                  value={form.rarity_id}
-                  onChange={(e) => setForm({ ...form, rarity_id: e.target.value })}
-                >
-                  {rarities.map((r) => (
-                    <option key={r.id} value={r.id}>
-                      {r.name}
-                    </option>
-                  ))}
-                </Select>
-              </Field>
-              <Field label="Уровень (лист)">
-                <Select
-                  value={form.level_id}
-                  onChange={(e) => setForm({ ...form, level_id: e.target.value })}
-                >
-                  {levels.map((l) => (
-                    <option key={l.id} value={l.id}>
-                      {l.name}
-                    </option>
-                  ))}
-                </Select>
+                <Input type="number" min={1} value={form.number} onChange={(e) => setForm({ ...form, number: e.target.value })} />
               </Field>
               <Field label="Цена, ₽">
-                <Input
-                  type="number"
-                  min={0}
-                  step="0.01"
-                  value={form.base_price}
-                  onChange={(e) => setForm({ ...form, base_price: e.target.value })}
-                />
+                <Input type="number" min={0} value={form.base_price} onChange={(e) => setForm({ ...form, base_price: e.target.value })} />
               </Field>
-              <Field label="Тираж (всего, шт.)">
-                <Input
-                  type="number"
-                  min={0}
-                  value={form.total_minted}
-                  onChange={(e) => setForm({ ...form, total_minted: e.target.value })}
-                />
+              <Field label="Тираж">
+                <Input type="number" min={1} value={form.total_minted} onChange={(e) => setForm({ ...form, total_minted: e.target.value })} />
               </Field>
             </div>
             <Field label="Статус">
-              <Select
-                value={form.status}
-                onChange={(e) => setForm({ ...form, status: e.target.value })}
-              >
-                <option value="draft">draft</option>
+              <Select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as "active" | "disabled" | "draft" })}>
                 <option value="active">active</option>
                 <option value="disabled">disabled</option>
+                <option value="draft">draft</option>
               </Select>
             </Field>
           </div>

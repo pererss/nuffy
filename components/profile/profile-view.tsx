@@ -84,18 +84,19 @@ export function ProfileView({ data }: { data: ProfileData }) {
   };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-3">
+    <div className="page-enter grid gap-5 lg:grid-cols-3">
+      {/* Main column */}
       <div className="flex flex-col gap-4 lg:col-span-2">
-        <Panel className="animate-fade-up relative overflow-hidden p-5">
+        {/* Profile card */}
+        <Panel className="relative overflow-hidden p-5">
           <div
             className="pointer-events-none absolute inset-0"
             style={{
-              background:
-                "radial-gradient(circle at 10% 0%, rgb(var(--brand) / 0.14), transparent 52%)",
+              background: "radial-gradient(circle at 10% 0%, rgb(var(--brand) / 0.1), transparent 50%)",
             }}
           />
-          <div className="relative flex items-center gap-4">
-            <span className="flex h-14 w-14 items-center justify-center rounded-xl bg-brand/15 font-display text-xl font-bold text-brand">
+          <div className="relative flex items-start gap-4">
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[6px] bg-brand/15 font-display text-xl font-bold text-brand">
               {data.username.slice(0, 1).toUpperCase()}
             </span>
             <div className="min-w-0 flex-1">
@@ -104,7 +105,7 @@ export function ProfileView({ data }: { data: ProfileData }) {
                   <Input
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="max-w-[220px]"
+                    className="max-w-[220px] h-8 text-[13px]"
                     onKeyDown={(e) => e.key === "Enter" && saveUsername()}
                   />
                   <Button size="sm" variant="primary" loading={saving} onClick={saveUsername}>
@@ -116,7 +117,7 @@ export function ProfileView({ data }: { data: ProfileData }) {
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
-                  <h1 className="font-display text-lg font-bold text-ink">{data.username}</h1>
+                  <h1 className="font-display text-[17px] font-bold tracking-tight text-ink">{data.username}</h1>
                   <IconButton size="sm" title="Изменить имя" onClick={() => setEditing(true)}>
                     <Pencil className="h-3.5 w-3.5" />
                   </IconButton>
@@ -124,9 +125,9 @@ export function ProfileView({ data }: { data: ProfileData }) {
               )}
               <div className="mt-1 flex flex-wrap items-center gap-2 text-[12px] text-ink-faint">
                 <span>Участник с {fmtDate(data.createdAt)}</span>
-                <span className="text-panel-strong">·</span>
+                <span className="text-[rgb(var(--border-strong))]">·</span>
                 <button
-                  className="flex items-center gap-1 font-mono text-brand hover:underline"
+                  className="flex items-center gap-1 font-mono text-brand hover:underline btn-press"
                   onClick={() => {
                     navigator.clipboard.writeText(fmtAccountId(data.accountId));
                     setCopied(true);
@@ -139,40 +140,42 @@ export function ProfileView({ data }: { data: ProfileData }) {
                 </button>
               </div>
             </div>
-            <div className="text-right">
-              <p className="text-[11px] text-ink-faint">Баланс</p>
+            <div className="text-right shrink-0">
+              <p className="text-[10px] text-ink-faint">Баланс</p>
               <p className="font-display text-xl font-bold tabular text-brand">
                 {fmtNumber(Math.round(data.balance))} ₽
               </p>
             </div>
           </div>
 
-          <div className="mt-5 grid grid-cols-2 gap-3">
+          {/* Stats row */}
+          <div className="relative mt-4 grid grid-cols-2 gap-2">
             {[
               { label: "Фишек в инвентаре", value: fmtNumber(data.itemsCount) },
               { label: "Активных листингов", value: fmtNumber(data.listingsCount) },
             ].map((s) => (
-              <div key={s.label} className="rounded-lg border border-panel-border bg-canvas-inset px-3 py-2.5">
-                <p className="text-[11px] text-ink-faint">{s.label}</p>
+              <div key={s.label} className="rounded-[4px] border border-[rgb(var(--border))] bg-[rgb(var(--surface-2))] px-3 py-2">
+                <p className="text-[10px] text-ink-faint">{s.label}</p>
                 <p className="mt-0.5 text-[15px] font-semibold tabular text-ink">{s.value}</p>
               </div>
             ))}
           </div>
         </Panel>
 
+        {/* Best drop */}
         {data.bestDrop && (
-          <Panel className="animate-fade-up p-5" style={{ animationDelay: "80ms" }}>
-            <h2 className="mb-3 font-display text-sm font-bold text-ink">Лучший дроп</h2>
+          <Panel className="p-5 animate-fade-up" style={{ animationDelay: "80ms" }}>
+            <h2 className="mb-3 font-display text-[13px] font-bold tracking-[0.06em] text-ink">Лучший дроп</h2>
             <div className="flex items-center gap-4">
               <ChipImage
                 name={data.bestDrop.name}
                 imageUrl={data.bestDrop.image_url}
                 crop={data.bestDrop.image_crop}
                 rarity={data.bestDrop.rarity.slug}
-                size={72}
+                size={64}
               />
               <div>
-                <p className="text-[15px] font-semibold text-ink">{data.bestDrop.name}</p>
+                <p className="text-[14px] font-semibold text-ink">{data.bestDrop.name}</p>
                 <RarityBadge slug={data.bestDrop.rarity.slug} className="mt-1" />
                 <p className="mt-1 tabular text-[13px] text-ink-faint">
                   {fmtNumber(Math.round(data.bestDrop.base_price))} ₽
@@ -182,12 +185,13 @@ export function ProfileView({ data }: { data: ProfileData }) {
           </Panel>
         )}
 
+        {/* Best chip */}
         {data.bestChip && (
-          <Panel className="animate-fade-up p-5" style={{ animationDelay: "120ms" }}>
-            <h2 className="mb-3 font-display text-sm font-bold text-ink">Лучший предмет в инвентаре</h2>
+          <Panel className="p-5 animate-fade-up" style={{ animationDelay: "120ms" }}>
+            <h2 className="mb-3 font-display text-[13px] font-bold tracking-[0.06em] text-ink">Лучший предмет</h2>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[15px] font-semibold text-ink">{data.bestChip.name}</p>
+                <p className="text-[14px] font-semibold text-ink">{data.bestChip.name}</p>
                 <RarityBadge slug={data.bestChip.rarity.slug} className="mt-1" />
               </div>
               <p className="tabular font-display text-lg font-bold text-ink">
@@ -198,68 +202,59 @@ export function ProfileView({ data }: { data: ProfileData }) {
         )}
       </div>
 
+      {/* Sidebar */}
       <div className="flex flex-col gap-4">
-        <Panel className="animate-fade-up p-5" style={{ animationDelay: "40ms" }}>
-          <h3 className="mb-2 font-display text-sm font-bold text-ink">Быстрые действия</h3>
-          <div className="flex flex-col gap-2">
-            <Button variant="primary" size="sm" onClick={() => setBalanceOpen(true)}>
+        {/* Quick actions */}
+        <Panel className="p-5 animate-fade-up" style={{ animationDelay: "40ms" }}>
+          <h3 className="mb-3 font-display text-[13px] font-bold tracking-[0.06em] text-ink">Быстрые действия</h3>
+          <div className="flex flex-col gap-1.5">
+            <Button variant="primary" size="sm" onClick={() => setBalanceOpen(true)} className="justify-start gap-2">
               <Wallet className="h-3.5 w-3.5" />
               Баланс и промокоды
             </Button>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => router.push("/inventory")}
-            >
+            <Button variant="secondary" size="sm" onClick={() => router.push("/inventory")} className="justify-start gap-2">
               Открыть инвентарь
             </Button>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => router.push("/marketplace")}
-            >
+            <Button variant="secondary" size="sm" onClick={() => router.push("/marketplace")} className="justify-start gap-2">
               На площадку
             </Button>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => router.push("/trades")}
-            >
+            <Button variant="secondary" size="sm" onClick={() => router.push("/trades")} className="justify-start gap-2">
               Мои обмены
             </Button>
           </div>
         </Panel>
 
-        <Panel className="animate-fade-up p-5" style={{ animationDelay: "80ms" }}>
-          <h3 className="mb-2 font-display text-sm font-bold text-ink">Настройки</h3>
-          <div className="flex flex-col gap-2">
+        {/* Settings */}
+        <Panel className="p-5 animate-fade-up" style={{ animationDelay: "80ms" }}>
+          <h3 className="mb-3 font-display text-[13px] font-bold tracking-[0.06em] text-ink">Настройки</h3>
+          <div className="flex flex-col gap-1.5">
             <button
               onClick={() => {
                 toggleSound();
                 if (soundOn) play("click");
               }}
-              className="flex items-center justify-between rounded-lg border border-panel-border px-3 py-2.5 transition-colors hover:border-panel-strong"
+              className="btn-press flex items-center justify-between rounded-[4px] border border-[rgb(var(--border))] px-3 py-2 transition-colors hover:border-[rgb(var(--border-strong))]"
             >
               <span className="flex items-center gap-2 text-[13px] font-medium text-ink">
-                {soundOn ? <Volume2 className="h-4 w-4 text-brand" /> : <VolumeX className="h-4 w-4 text-ink-dim" />}
+                {soundOn ? <Volume2 className="h-3.5 w-3.5 text-brand" /> : <VolumeX className="h-3.5 w-3.5 text-ink-dim" />}
                 Звуковые эффекты
               </span>
               <span
                 className={cn(
                   "flex h-5 w-9 items-center rounded-full border px-0.5 transition-colors",
-                  soundOn ? "justify-end border-brand bg-brand/20" : "justify-start border-panel-strong bg-canvas-inset"
+                  soundOn ? "justify-end border-brand bg-brand/20" : "justify-start border-[rgb(var(--border-strong))] bg-[rgb(var(--surface-2))]"
                 )}
               >
                 <span className={cn("h-4 w-4 rounded-full transition-colors", soundOn ? "bg-brand" : "bg-ink-dim")} />
               </span>
             </button>
             {data.isAdmin && (
-              <Button variant="secondary" size="sm" onClick={() => router.push("/admin")}>
+              <Button variant="secondary" size="sm" onClick={() => router.push("/admin/dashboard")} className="justify-start gap-2">
                 <Shield className="h-3.5 w-3.5" />
                 Админ-панель
               </Button>
             )}
-            <Button variant="ghost" size="sm" loading={signingOut} onClick={doSignOut} className="text-danger hover:bg-danger/10">
+            <Button variant="ghost" size="sm" loading={signingOut} onClick={doSignOut} className="justify-start gap-2 text-danger hover:bg-danger/10 hover:text-danger">
               <LogOut className="h-3.5 w-3.5" />
               Выйти
             </Button>

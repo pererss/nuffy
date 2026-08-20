@@ -8,7 +8,7 @@ export default function ContactsPage() {
       <div className="rule-box">
         <h3>Почта</h3>
         <p>
-          <a href="mailto:nuffysup@gmail.com">nuffysup@gmail.com</a>
+          <a href="mailto:nuffysup@gmail.com" className="text-brand hover:underline">nuffysup@gmail.com</a>
         </p>
         <p>По всем вопросам: поддержка, пополнение баланса, ошибки, предложения.</p>
       </div>

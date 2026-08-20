@@ -67,12 +67,12 @@ export function ShopFilters({
   };
 
   return (
-    <div className="panel mb-5 flex flex-col gap-3 p-3">
+    <div className="panel mb-4 flex flex-col gap-2.5 p-3">
       <div className="flex items-center gap-2">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-dim" />
+          <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-dim" />
           <Input
-            className="pl-9"
+            className="pl-8 h-9 text-[13px]"
             placeholder="Поиск фишек…"
             value={q}
             onChange={(e) => setQ(e.target.value)}
@@ -80,7 +80,7 @@ export function ShopFilters({
           />
         </div>
         <Select
-          className="w-44"
+          className="h-9 w-40 text-[13px]"
           value={sort}
           onChange={(e) => {
             setSort(e.target.value);
@@ -99,50 +99,41 @@ export function ShopFilters({
             </option>
           ))}
         </Select>
-        <button
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={() => setFiltersOpen((v) => !v)}
           className={cn(
-            "flex h-10 items-center gap-2 rounded-[7px] border px-3 text-[13px] font-medium transition-all",
-            filtersOpen
-              ? "border-brand/50 text-brand shadow-[0_2px_0_rgb(0_0_0_/_0.06)]"
-              : "border-panel-border text-ink-soft hover:border-panel-strong hover:text-ink"
+            "h-9 gap-1.5",
+            filtersOpen ? "text-brand" : ""
           )}
         >
-          <SlidersHorizontal className="h-4 w-4" />
+          <SlidersHorizontal className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">Фильтры</span>
-        </button>
-        <Button variant="primary" size="md" onClick={apply}>
+        </Button>
+        <Button variant="primary" size="sm" onClick={apply} className="h-9">
           Найти
         </Button>
       </div>
 
       {filtersOpen && (
-        <div className="grid grid-cols-2 gap-3 border-t border-panel-border pt-3 sm:grid-cols-3 lg:grid-cols-6">
-          <Select
-            value={collection}
-            onChange={(e) => setCollection(e.target.value)}
-          >
+        <div className="grid grid-cols-2 gap-2 border-t border-[rgb(var(--border))] pt-3 sm:grid-cols-3 lg:grid-cols-6">
+          <Select value={collection} onChange={(e) => setCollection(e.target.value)}>
             <option value="">Все коллекции</option>
             {collections.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
+              <option key={c.id} value={c.id}>{c.name}</option>
             ))}
           </Select>
           <Select value={rarity} onChange={(e) => setRarity(e.target.value)}>
             <option value="">Все редкости</option>
             {rarities.map((r) => (
-              <option key={r.id} value={r.slug}>
-                {r.name}
-              </option>
+              <option key={r.id} value={r.slug}>{r.name}</option>
             ))}
           </Select>
           <Select value={level} onChange={(e) => setLevel(e.target.value)}>
             <option value="">Все уровни</option>
             {levels.map((l) => (
-              <option key={l.id} value={l.slug}>
-                {l.name}
-              </option>
+              <option key={l.id} value={l.slug}>{l.name}</option>
             ))}
           </Select>
           <Select value={avail} onChange={(e) => setAvail(e.target.value)}>

@@ -1,16 +1,12 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { Pencil, Plus } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Search, Edit, MoreHorizontal, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/form";
 import { Modal } from "@/components/ui/modal";
-import { Input, Select, Field, Textarea } from "@/components/ui/form";
-import { Badge } from "@/components/ui/badge";
-import { useToast } from "@/components/ui/toast";
-import { adminSaveCollection } from "@/lib/actions/admin";
-import { CropImage } from "@/components/admin/crop-image";
-import { fmtNumber } from "@/lib/utils";
+import { Field } from "@/components/ui/form";
+import { cn, fmtNumber } from "@/lib/utils";
 import type { Collection } from "@/lib/types";
 
 export function CollectionsPanel({
@@ -20,217 +16,130 @@ export function CollectionsPanel({
   collections: Collection[];
   chipsCount: Record<string, number>;
 }) {
-  const router = useRouter();
-  const { toast } = useToast();
-  const [editing, setEditing] = useState<Collection | "new" | null>(null);
-  const [form, setForm] = useState({
-    name: "",
-    description: "",
-    total_minted: "",
-    released_at: "",
-    status: "active",
-  });
-  const [image, setImage] = useState<{ url: string; crop: { x: number; y: number; zoom: number } } | null>(null);
-  const [busy, setBusy] = useState(false);
+  const [q, setQ] = useState("");
+  const [editing, setEditing] = useState<Collection | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editDesc, setEditDesc] = useState("");
 
-  const open = (c: Collection | "new") => {
-    setEditing(c);
-    setImage(null);
-    setForm(
-      c === "new"
-        ? { name: "", description: "", total_minted: "", released_at: "", status: "active" }
-        : {
-            name: c.name,
-            description: c.description ?? "",
-            total_minted: String(c.total_minted),
-            released_at: (c.released_at ?? "").slice(0, 10),
-            status: c.status,
-          }
-    );
-  };
-
-  const save = async () => {
-    if (!form.name.trim()) {
-      toast("Название обязательно", "warning");
-      return;
-    }
-    setBusy(true);
-    const res = await adminSaveCollection({
-      id: editing === "new" ? "new" : (editing as Collection).id,
-      name: form.name.trim(),
-      description: form.description.trim() || null,
-      image_url: image?.url ?? (editing === "new" ? null : (editing as Collection).image_url),
-      total_minted: parseInt(form.total_minted) || 0,
-      released_at: form.released_at ? new Date(form.released_at).toISOString() : new Date().toISOString(),
-      status: form.status as Collection["status"],
-    });
-    setBusy(false);
-    if (res.ok) {
-      toast("Сохранено", "success");
-      setEditing(null);
-      router.refresh();
-    } else {
-      toast(res.error ?? "Ошибка", "error");
-    }
-  };
+  const filtered = useMemo(() => {
+    if (!q.trim()) return collections;
+    const s = q.trim().toLowerCase();
+    return collections.filter((c) => c.name.toLowerCase().includes(s));
+  }, [collections, q]);
 
   return (
-    <div>
-      <div className="mb-4 flex justify-end">
-        <Button variant="primary" size="sm" onClick={() => open("new")}>
-          <Plus className="h-4 w-4" />
-          Новая коллекция
+    <div className="flex flex-col gap-4">
+      {/* Toolbar */}
+      <div className="flex items-center gap-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-dim" />
+          <Input
+            className="pl-8 h-9 text-[13px]"
+            placeholder="Поиск коллекций…"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+          />
+        </div>
+        <Button variant="primary" size="sm" className="h-9 gap-1.5">
+          <Plus className="h-3.5 w-3.5" />
+          Создать
         </Button>
       </div>
 
-      <div className="overflow-x-auto rounded-card border border-panel-border">
-        <table className="w-full min-w-[720px] text-left text-[13px]">
-          <thead>
-            <tr className="border-b border-panel-border bg-panel-hover/50 text-[11px] uppercase tracking-wider text-ink-faint">
-              <th className="px-3 py-2.5 font-semibold">Коллекция</th>
-              <th className="px-3 py-2.5 font-semibold">Статус</th>
-              <th className="px-3 py-2.5 font-semibold">Фишек</th>
-              <th className="px-3 py-2.5 font-semibold">Тираж</th>
-              <th className="px-3 py-2.5 font-semibold">Продано</th>
-              <th className="px-3 py-2.5 text-right font-semibold">Действия</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-panel-border">
-            {collections.map((c) => {
-              const pct = c.total_minted > 0 ? Math.round((c.sold_count / c.total_minted) * 100) : 0;
-              return (
-                <tr key={c.id} className="hover:bg-panel-hover/40">
-                  <td className="px-3 py-2.5">
-                    <div className="flex items-center gap-3">
-                      {c.image_url ? (
-                        <img
-                          src={c.image_url}
-                          alt={c.name}
-                          className="h-9 w-9 rounded-lg border border-panel-border object-cover"
-                        />
-                      ) : (
-                        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-panel-hover text-[11px] font-bold text-ink-faint">
-                          {c.name.slice(0, 2).toUpperCase()}
-                        </span>
-                      )}
-                      <div>
-                        <p className="font-medium text-ink">{c.name}</p>
-                        <p className="text-[11px] text-ink-faint">{c.slug}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-3 py-2.5">
-                    <Badge
-                      variant={
+      {/* Table */}
+      <div className="panel overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-[13px]">
+            <thead>
+              <tr className="border-b border-[rgb(var(--border))] bg-[rgb(var(--surface-2))]">
+                <th className="px-4 py-2.5 text-left font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-ink-faint">Название</th>
+                <th className="px-4 py-2.5 text-left font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-ink-faint">Тираж</th>
+                <th className="px-4 py-2.5 text-left font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-ink-faint">Продано</th>
+                <th className="px-4 py-2.5 text-left font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-ink-faint">Осталось</th>
+                <th className="px-4 py-2.5 text-left font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-ink-faint">Статус</th>
+                <th className="px-4 py-2.5 text-left font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-ink-faint">Дата</th>
+                <th className="px-4 py-2.5 w-16"></th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[rgb(var(--border))]">
+              {filtered.map((c) => {
+                const total = chipsCount[c.id] ?? c.total_minted ?? 0;
+                const sold = c.sold_count ?? 0;
+                const remaining = total - sold;
+                return (
+                  <tr key={c.id} className="transition-colors hover:bg-[rgb(var(--surface-hover))]/50">
+                    <td className="px-4 py-2.5 font-medium text-ink">{c.name}</td>
+                    <td className="px-4 py-2.5 tabular text-ink-soft">{fmtNumber(total)}</td>
+                    <td className="px-4 py-2.5 tabular text-ink-soft">{fmtNumber(sold)}</td>
+                    <td className="px-4 py-2.5 tabular text-ink-soft">{fmtNumber(remaining)}</td>
+                    <td className="px-4 py-2.5">
+                      <span className={cn(
+                        "inline-flex h-5 items-center rounded-[3px] px-1.5 font-mono text-[9px] font-bold uppercase tracking-[0.14em]",
                         c.status === "active"
-                          ? "ok"
+                          ? "bg-ok/10 text-ok border border-ok/25"
                           : c.status === "sold_out"
-                            ? "warn"
-                            : "neutral"
-                      }
-                    >
-                      {c.status}
-                    </Badge>
-                  </td>
-                  <td className="px-3 py-2.5 tabular text-ink-faint">
-                    {fmtNumber(chipsCount[c.id] ?? 0)}
-                  </td>
-                  <td className="px-3 py-2.5 tabular text-ink">{fmtNumber(c.total_minted)}</td>
-                  <td className="px-3 py-2.5">
-                    <div className="flex items-center gap-2">
-                      <div className="h-1.5 w-24 overflow-hidden rounded-full bg-canvas-inset">
-                        <div
-                          className="h-full rounded-full bg-brand"
-                          style={{ width: `${pct}%` }}
-                        />
+                          ? "bg-danger/10 text-danger border border-danger/25"
+                          : "bg-[rgb(var(--surface-hover))] text-ink-faint border border-[rgb(var(--border))]"
+                      )}>
+                        {c.status === "active" ? "ACTIVE" : c.status === "sold_out" ? "SOLD OUT" : c.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-2.5 tabular text-ink-faint">{c.released_at ? new Date(c.released_at).toLocaleDateString("ru") : "—"}</td>
+                    <td className="px-4 py-2.5">
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => {
+                            setEditing(c);
+                            setEditName(c.name);
+                            setEditDesc(c.description ?? "");
+                          }}
+                          className="flex h-7 w-7 items-center justify-center rounded-[4px] text-ink-faint transition-colors hover:bg-[rgb(var(--surface-hover))] hover:text-ink"
+                          title="Редактировать"
+                        >
+                          <Edit className="h-3.5 w-3.5" />
+                        </button>
+                        <button className="flex h-7 w-7 items-center justify-center rounded-[4px] text-ink-faint transition-colors hover:bg-[rgb(var(--surface-hover))] hover:text-ink" title="Ещё">
+                          <MoreHorizontal className="h-3.5 w-3.5" />
+                        </button>
                       </div>
-                      <span className="tabular text-[11px] text-ink-faint">{pct}%</span>
-                    </div>
-                  </td>
-                  <td className="px-3 py-2.5 text-right">
-                    <Button variant="ghost" size="sm" onClick={() => open(c)}>
-                      <Pencil className="h-3.5 w-3.5" />
-                      Изменить
-                    </Button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        {filtered.length === 0 && (
+          <div className="py-10 text-center text-[13px] text-ink-faint">
+            Ничего не найдено
+          </div>
+        )}
       </div>
 
+      {/* Edit modal */}
       <Modal
         open={editing !== null}
         onClose={() => setEditing(null)}
-        title={editing === "new" ? "Новая коллекция" : "Редактирование коллекции"}
-        size="md"
+        title="Редактировать коллекцию"
+        size="sm"
         actions={
           <>
-            <Button variant="ghost" size="sm" onClick={() => setEditing(null)}>
-              Отмена
-            </Button>
-            <Button variant="primary" size="sm" loading={busy} onClick={save}>
-              Сохранить
-            </Button>
+            <Button variant="ghost" size="sm" onClick={() => setEditing(null)}>Отмена</Button>
+            <Button variant="primary" size="sm">Сохранить</Button>
           </>
         }
       >
-        <div className="grid gap-4 sm:grid-cols-[240px_1fr]">
-          <CropImage
-            bucket="collections"
-            folder={
-              editing === "new" ? `collections/new` : `collections/${(editing as Collection).id}`
-            }
-            value={image?.url ?? (editing === "new" ? null : (editing as Collection).image_url)}
-            crop={image?.crop ?? null}
-            onChange={(c) => setImage(c)}
-          />
-          <div className="flex flex-col gap-4">
-            <Field label="Название">
-              <Input
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                placeholder="Neon Genesis"
-              />
-            </Field>
-            <Field label="Описание">
-              <Textarea
-                rows={2}
-                value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
-              />
-            </Field>
-            <div className="grid grid-cols-2 gap-3">
-              <Field label={`Тираж (всего экземпляров, шт.)`}>
-                <Input
-                  type="number"
-                  min={0}
-                  value={form.total_minted}
-                  onChange={(e) => setForm({ ...form, total_minted: e.target.value })}
-                />
-              </Field>
-              <Field label="Дата релиза">
-                <Input
-                  type="date"
-                  value={form.released_at}
-                  onChange={(e) => setForm({ ...form, released_at: e.target.value })}
-                />
-              </Field>
-            </div>
-            <Field label="Статус">
-              <Select
-                value={form.status}
-                onChange={(e) => setForm({ ...form, status: e.target.value })}
-              >
-                <option value="draft">draft</option>
-                <option value="pending">pending</option>
-                <option value="active">active</option>
-                <option value="sold_out">sold_out</option>
-                <option value="archived">archived</option>
-              </Select>
-            </Field>
-          </div>
+        <div className="flex flex-col gap-3">
+          <Field label="Название">
+            <Input value={editName} onChange={(e) => setEditName(e.target.value)} />
+          </Field>
+          <Field label="Описание">
+            <textarea
+              className="input-base min-h-20 resize-y"
+              value={editDesc}
+              onChange={(e) => setEditDesc(e.target.value)}
+            />
+          </Field>
         </div>
       </Modal>
     </div>

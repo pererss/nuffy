@@ -37,7 +37,7 @@ function FlagSwitch({
     <button
       type="button"
       onClick={() => onChange(!value)}
-      className="flex w-full items-center justify-between gap-3 rounded-lg border border-panel-border px-3 py-2.5 text-left transition-colors hover:border-panel-strong"
+      className="flex w-full items-center justify-between gap-3 rounded-[4px] border border-[rgb(var(--border))] px-3 py-2 text-left transition-colors hover:border-[rgb(var(--border-strong))]"
     >
       <span>
         <span className="block text-[13px] font-medium text-ink">{label}</span>
@@ -46,10 +46,10 @@ function FlagSwitch({
       <span
         className={cn(
           "flex h-5 w-9 shrink-0 items-center rounded-full border px-0.5 transition-colors",
-          value ? "justify-end border-ok/60 bg-ok/15" : "justify-start border-panel-strong bg-canvas-inset"
+          value ? "justify-end border-[rgb(var(--brand-border))] bg-brand/15" : "justify-start border-[rgb(var(--border-strong))] bg-[rgb(var(--surface-2))]"
         )}
       >
-        <span className={cn("h-4 w-4 rounded-full transition-colors", value ? "bg-ok" : "bg-ink-dim")} />
+        <span className={cn("h-4 w-4 rounded-full transition-colors", value ? "bg-brand" : "bg-ink-dim")} />
       </span>
     </button>
   );
@@ -77,47 +77,44 @@ export function SettingsForm({ initial }: { initial: SettingsFormData }) {
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-5">
       <Panel>
         <PanelHeader
           title="Система"
-          right={<span className="text-[11px] text-ink-faint">применяется мгновенно</span>}
+          right={<span className="text-[10px] text-ink-faint">применяется мгновенно</span>}
         />
-        <div className="flex flex-col gap-4 p-5">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Lock-период продажи, дней" hint="0 — без блокировки (до 30)">
-              <Input
-                type="number"
-                min={0}
-                max={30}
-                value={form.system.sell_lock_days}
-                onChange={(e) => setSystem({ sell_lock_days: parseInt(e.target.value) || 0 })}
-              />
-            </Field>
-            <div className="hidden sm:block" />
-          </div>
-          <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-4 p-4">
+          <Field label="Lock-период продажи, дней" hint="0 — без блокировки (до 30)">
+            <Input
+              type="number"
+              min={0}
+              max={30}
+              value={form.system.sell_lock_days}
+              onChange={(e) => setSystem({ sell_lock_days: parseInt(e.target.value) || 0 })}
+            />
+          </Field>
+          <div className="flex flex-col gap-1.5">
             <FlagSwitch
-              label="Магазин (покупка фишек и паков)"
-              hint="Отключает buy_chip и open_pack"
+              label="Магазин"
+              hint="Покупка фишек и паков"
               value={form.system.shop_enabled}
               onChange={(v) => setSystem({ shop_enabled: v })}
             />
             <FlagSwitch
               label="Торговая площадка"
-              hint="Отключает покупку листингов"
+              hint="Покупка листингов"
               value={form.system.marketplace_enabled}
               onChange={(v) => setSystem({ marketplace_enabled: v })}
             />
             <FlagSwitch
               label="Обмены"
-              hint="Отключает создание и принятие обменов"
+              hint="Создание и принятие обменов"
               value={form.system.trades_enabled}
               onChange={(v) => setSystem({ trades_enabled: v })}
             />
             <FlagSwitch
               label="Апгрейды"
-              hint="Отключает апгрейд-механику"
+              hint="Апгрейд-механика"
               value={form.system.upgrades_enabled}
               onChange={(v) => setSystem({ upgrades_enabled: v })}
             />
@@ -127,11 +124,8 @@ export function SettingsForm({ initial }: { initial: SettingsFormData }) {
 
       <Panel>
         <PanelHeader title="Экономика" />
-        <div className="grid gap-4 p-5 sm:grid-cols-2">
-          <Field
-            label="Комиссия площадки, %"
-            hint="удерживается с продавца при покупке листинга"
-          >
+        <div className="grid gap-4 p-4 sm:grid-cols-2">
+          <Field label="Комиссия площадки, %" hint="удерживается с продавца">
             <Input
               type="number"
               min={0}
@@ -143,10 +137,7 @@ export function SettingsForm({ initial }: { initial: SettingsFormData }) {
               }
             />
           </Field>
-          <Field
-            label="Множитель источника апгрейда"
-            hint="стоимость сжигаемой фишки × множитель"
-          >
+          <Field label="Множитель источника апгрейда" hint="стоимость сжигаемой × множитель">
             <Input
               type="number"
               min={0}
@@ -162,12 +153,12 @@ export function SettingsForm({ initial }: { initial: SettingsFormData }) {
       </Panel>
 
       <div className="flex items-center gap-3">
-        <Button variant="primary" loading={saving} onClick={save}>
-          <Save className="h-4 w-4" />
+        <Button variant="primary" loading={saving} onClick={save} className="gap-1.5">
+          <Save className="h-3.5 w-3.5" />
           Сохранить настройки
         </Button>
-        <span className="text-[12px] text-ink-faint">
-          Изменения применяются сразу, без перезапуска
+        <span className="text-[11px] text-ink-faint">
+          Изменения применяются сразу
         </span>
       </div>
     </div>

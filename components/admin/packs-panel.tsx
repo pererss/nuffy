@@ -97,81 +97,72 @@ export function PacksPanel({
   return (
     <div>
       <div className="mb-4 flex justify-end">
-        <Button variant="primary" size="sm" onClick={() => open("new")}>
-          <Plus className="h-4 w-4" />
+        <Button variant="primary" size="sm" onClick={() => open("new")} className="gap-1.5">
+          <Plus className="h-3.5 w-3.5" />
           Новый пак
         </Button>
       </div>
 
-      <div className="overflow-x-auto rounded-card border border-panel-border">
-        <table className="w-full min-w-[780px] text-left text-[13px]">
-          <thead>
-            <tr className="border-b border-panel-border bg-panel-hover/50 text-[11px] uppercase tracking-wider text-ink-faint">
-              <th className="px-3 py-2.5 font-semibold">Пак</th>
-              <th className="px-3 py-2.5 font-semibold">Цена</th>
-              <th className="px-3 py-2.5 font-semibold">Остаток</th>
-              <th className="px-3 py-2.5 font-semibold">Версий</th>
-              <th className="px-3 py-2.5 font-semibold">Статус</th>
-              <th className="px-3 py-2.5 font-semibold">Окно продаж</th>
-              <th className="px-3 py-2.5 text-right font-semibold">Действия</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-panel-border">
-            {packs.map((p) => (
-              <tr key={p.id} className="hover:bg-panel-hover/40">
-                <td className="px-3 py-2.5">
-                  <div className="flex items-center gap-3">
-                    {p.image_url ? (
-                      <img
-                        src={p.image_url}
-                        alt={p.name}
-                        className="h-9 w-9 rounded-lg border border-panel-border object-cover"
-                      />
-                    ) : (
-                      <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-panel-hover text-[11px] font-bold text-ink-faint">
-                        {p.name.slice(0, 2).toUpperCase()}
-                      </span>
-                    )}
-                    <span className="font-medium text-ink">{p.name}</span>
-                  </div>
-                </td>
-                <td className="px-3 py-2.5 tabular text-ink">{fmtNumber(Math.round(p.price))} ₽</td>
-                <td className="px-3 py-2.5 tabular text-ink-faint">
-                  {p.available_count != null ? fmtNumber(p.available_count) : "∞"}
-                </td>
-                <td className="px-3 py-2.5 tabular text-ink-faint">{versionsCount[p.id] ?? 0}</td>
-                <td className="px-3 py-2.5">
-                  <Badge
-                    variant={
-                      p.status === "active" ? "ok" : p.status === "ended" ? "neutral" : "warn"
-                    }
-                  >
-                    {p.status}
-                  </Badge>
-                </td>
-                <td className="px-3 py-2.5 text-[11px] text-ink-faint">
-                  {p.starts_at ? p.starts_at.slice(0, 16).replace("T", " ") : "—"}
-                  {p.ends_at ? ` → ${p.ends_at.slice(0, 16).replace("T", " ")}` : ""}
-                </td>
-                <td className="px-3 py-2.5">
-                  <div className="flex items-center justify-end gap-1">
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => router.push(`/admin/packs/${p.id}`)}
-                    >
-                      <Layers className="h-3.5 w-3.5" />
-                      Версии
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={() => open(p)}>
-                      <Pencil className="h-3.5 w-3.5" />
-                    </Button>
-                  </div>
-                </td>
+      <div className="panel overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[740px] text-[13px]">
+            <thead>
+              <tr className="border-b border-[rgb(var(--border))] bg-[rgb(var(--surface-2))]">
+                <th className="px-3 py-2 text-left font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-ink-faint">Пак</th>
+                <th className="px-3 py-2 text-left font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-ink-faint">Цена</th>
+                <th className="px-3 py-2 text-left font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-ink-faint">Остаток</th>
+                <th className="px-3 py-2 text-left font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-ink-faint">Версий</th>
+                <th className="px-3 py-2 text-left font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-ink-faint">Статус</th>
+                <th className="px-3 py-2 text-left font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-ink-faint">Окно</th>
+                <th className="px-3 py-2 w-20"></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-[rgb(var(--border))]">
+              {packs.map((p) => (
+                <tr key={p.id} className="transition-colors hover:bg-[rgb(var(--surface-hover))]/50">
+                  <td className="px-3 py-2">
+                    <div className="flex items-center gap-2.5">
+                      {p.image_url ? (
+                        <img src={p.image_url} alt={p.name} className="h-8 w-8 rounded-[3px] border border-[rgb(var(--border))] object-cover" />
+                      ) : (
+                        <span className="flex h-8 w-8 items-center justify-center rounded-[3px] bg-[rgb(var(--surface-2))] text-[10px] font-bold text-ink-faint">
+                          {p.name.slice(0, 2).toUpperCase()}
+                        </span>
+                      )}
+                      <span className="font-medium text-ink">{p.name}</span>
+                    </div>
+                  </td>
+                  <td className="px-3 py-2 tabular text-ink font-medium">{fmtNumber(Math.round(p.price))} ₽</td>
+                  <td className="px-3 py-2 tabular text-ink-faint">
+                    {p.available_count != null ? fmtNumber(p.available_count) : "∞"}
+                  </td>
+                  <td className="px-3 py-2 tabular text-ink-faint">{versionsCount[p.id] ?? 0}</td>
+                  <td className="px-3 py-2">
+                    <Badge variant={
+                      p.status === "active" ? "ok" : p.status === "ended" ? "neutral" : "warn"
+                    }>
+                      {p.status}
+                    </Badge>
+                  </td>
+                  <td className="px-3 py-2 text-[10px] text-ink-faint">
+                    {p.starts_at ? p.starts_at.slice(0, 16).replace("T", " ") : "—"}
+                    {p.ends_at ? ` → ${p.ends_at.slice(0, 16).replace("T", " ")}` : ""}
+                  </td>
+                  <td className="px-3 py-2">
+                    <div className="flex items-center justify-end gap-0.5">
+                      <Button variant="secondary" size="sm" onClick={() => router.push(`/admin/packs/${p.id}`)} className="h-7 px-2">
+                        <Layers className="h-3 w-3" />
+                      </Button>
+                      <Button variant="ghost" size="sm" onClick={() => open(p)} className="h-7 w-7 p-0">
+                        <Pencil className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <Modal
@@ -182,27 +173,17 @@ export function PacksPanel({
         actions={
           <>
             {editing && editing !== "new" && (
-              <Button
-                variant="danger"
-                size="sm"
-                loading={busy}
-                className="mr-auto"
-                onClick={end}
-              >
+              <Button variant="danger" size="sm" loading={busy} className="mr-auto" onClick={end}>
                 <Trash2 className="h-3.5 w-3.5" />
                 Завершить
               </Button>
             )}
-            <Button variant="ghost" size="sm" onClick={() => setEditing(null)}>
-              Отмена
-            </Button>
-            <Button variant="primary" size="sm" loading={busy} onClick={save}>
-              Сохранить
-            </Button>
+            <Button variant="ghost" size="sm" onClick={() => setEditing(null)}>Отмена</Button>
+            <Button variant="primary" size="sm" loading={busy} onClick={save}>Сохранить</Button>
           </>
         }
       >
-        <div className="grid gap-4 sm:grid-cols-[240px_1fr]">
+        <div className="grid gap-4 sm:grid-cols-[220px_1fr]">
           <CropImage
             bucket="packs"
             folder={editing === "new" ? "packs/new" : `packs/${(editing as Pack).id}`}
@@ -210,57 +191,29 @@ export function PacksPanel({
             crop={image?.crop ?? null}
             onChange={(c) => setImage(c)}
           />
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3">
             <Field label="Название">
-              <Input
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-              />
+              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
             </Field>
             <Field label="Описание">
-              <Input
-                value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
-              />
+              <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
             </Field>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Цена, ₽">
-                <Input
-                  type="number"
-                  min={0}
-                  step="0.01"
-                  value={form.price}
-                  onChange={(e) => setForm({ ...form, price: e.target.value })}
-                />
+                <Input type="number" min={0} step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
               </Field>
               <Field label="Доступно (пусто = ∞)">
-                <Input
-                  type="number"
-                  min={0}
-                  value={form.available_count}
-                  onChange={(e) => setForm({ ...form, available_count: e.target.value })}
-                />
+                <Input type="number" min={0} value={form.available_count} onChange={(e) => setForm({ ...form, available_count: e.target.value })} />
               </Field>
               <Field label="Начало">
-                <Input
-                  type="datetime-local"
-                  value={form.starts_at}
-                  onChange={(e) => setForm({ ...form, starts_at: e.target.value })}
-                />
+                <Input type="datetime-local" value={form.starts_at} onChange={(e) => setForm({ ...form, starts_at: e.target.value })} />
               </Field>
               <Field label="Конец">
-                <Input
-                  type="datetime-local"
-                  value={form.ends_at}
-                  onChange={(e) => setForm({ ...form, ends_at: e.target.value })}
-                />
+                <Input type="datetime-local" value={form.ends_at} onChange={(e) => setForm({ ...form, ends_at: e.target.value })} />
               </Field>
             </div>
             <Field label="Статус">
-              <Select
-                value={form.status}
-                onChange={(e) => setForm({ ...form, status: e.target.value })}
-              >
+              <Select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })}>
                 <option value="draft">draft</option>
                 <option value="active">active</option>
                 <option value="paused">paused</option>

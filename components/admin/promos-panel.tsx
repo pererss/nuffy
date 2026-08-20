@@ -32,16 +32,7 @@ export function PromosPanel({ promos }: { promos: PromoCode[] }) {
     setEditing(p);
     setForm(
       p === "new"
-        ? {
-            code: "",
-            bonus_type: "fixed",
-            bonus_value: "",
-            max_uses: "",
-            per_user_limit: "1",
-            starts_at: "",
-            ends_at: "",
-            is_active: true,
-          }
+        ? { code: "", bonus_type: "fixed", bonus_value: "", max_uses: "", per_user_limit: "1", starts_at: "", ends_at: "", is_active: true }
         : {
             code: p.code,
             bonus_type: p.bonus_type,
@@ -99,163 +90,109 @@ export function PromosPanel({ promos }: { promos: PromoCode[] }) {
   return (
     <div>
       <div className="mb-4 flex justify-end">
-        <Button variant="primary" size="sm" onClick={() => open("new")}>
-          <Plus className="h-4 w-4" />
+        <Button variant="primary" size="sm" onClick={() => open("new")} className="gap-1.5">
+          <Plus className="h-3.5 w-3.5" />
           Новый промокод
         </Button>
       </div>
 
-      <div className="overflow-x-auto rounded-card border border-panel-border">
-        <table className="w-full min-w-[760px] text-left text-[13px]">
-          <thead>
-            <tr className="border-b border-panel-border bg-panel-hover/50 text-[11px] uppercase tracking-wider text-ink-faint">
-              <th className="px-3 py-2.5 font-semibold">Код</th>
-              <th className="px-3 py-2.5 font-semibold">Бонус</th>
-              <th className="px-3 py-2.5 font-semibold">Лимиты</th>
-              <th className="px-3 py-2.5 font-semibold">Сроки</th>
-              <th className="px-3 py-2.5 font-semibold">Статус</th>
-              <th className="px-3 py-2.5 text-right font-semibold">Действия</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-panel-border">
-            {promos.map((p) => (
-              <tr key={p.id} className="hover:bg-panel-hover/40">
-                <td className="px-3 py-2.5 font-mono font-bold tracking-wider text-brand">
-                  {p.code}
-                </td>
-                <td className="px-3 py-2.5 tabular text-ink">
-                  {p.bonus_type === "percent"
-                    ? `${p.bonus_value}%`
-                    : `${fmtNumber(Math.round(p.bonus_value))} ₽`}
-                </td>
-                <td className="px-3 py-2.5 text-[12px] text-ink-faint">
-                  {p.max_uses > 0 ? `${fmtNumber(p.max_uses)} всего` : "∞ всего"} ·{" "}
-                  {fmtNumber(p.per_user_limit ?? 1)} на юзера
-                </td>
-                <td className="px-3 py-2.5 text-[11px] text-ink-faint">
-                  {p.starts_at ? p.starts_at.slice(0, 16).replace("T", " ") : "—"}
-                  {p.ends_at ? ` → ${p.ends_at.slice(0, 16).replace("T", " ")}` : ""}
-                </td>
-                <td className="px-3 py-2.5">
-                  <Badge variant={p.is_active ? "ok" : "neutral"}>
-                    {p.is_active ? "активен" : "выкл"}
-                  </Badge>
-                </td>
-                <td className="px-3 py-2.5">
-                  <div className="flex items-center justify-end gap-1">
-                    <Button variant="ghost" size="sm" onClick={() => open(p)}>
-                      <Pencil className="h-3.5 w-3.5" />
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={() => open(p)}>
-                      <Trash2 className="h-3.5 w-3.5 text-danger" />
-                    </Button>
-                  </div>
-                </td>
+      <div className="panel overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[720px] text-[13px]">
+            <thead>
+              <tr className="border-b border-[rgb(var(--border))] bg-[rgb(var(--surface-2))]">
+                <th className="px-3 py-2 text-left font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-ink-faint">Код</th>
+                <th className="px-3 py-2 text-left font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-ink-faint">Бонус</th>
+                <th className="px-3 py-2 text-left font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-ink-faint">Лимиты</th>
+                <th className="px-3 py-2 text-left font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-ink-faint">Сроки</th>
+                <th className="px-3 py-2 text-left font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-ink-faint">Статус</th>
+                <th className="px-3 py-2 w-16"></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-[rgb(var(--border))]">
+              {promos.map((p) => (
+                <tr key={p.id} className="transition-colors hover:bg-[rgb(var(--surface-hover))]/50">
+                  <td className="px-3 py-2 font-mono font-bold tracking-wider text-brand">{p.code}</td>
+                  <td className="px-3 py-2 tabular text-ink font-medium">
+                    {p.bonus_type === "percent" ? `${p.bonus_value}%` : `${fmtNumber(Math.round(p.bonus_value))} ₽`}
+                  </td>
+                  <td className="px-3 py-2 text-[11px] text-ink-faint">
+                    {p.max_uses > 0 ? `${fmtNumber(p.max_uses)} всего` : "∞ всего"} · {fmtNumber(p.per_user_limit ?? 1)} на юзера
+                  </td>
+                  <td className="px-3 py-2 text-[10px] text-ink-faint">
+                    {p.starts_at ? p.starts_at.slice(0, 16).replace("T", " ") : "—"}
+                    {p.ends_at ? ` → ${p.ends_at.slice(0, 16).replace("T", " ")}` : ""}
+                  </td>
+                  <td className="px-3 py-2">
+                    <Badge variant={p.is_active ? "ok" : "neutral"}>
+                      {p.is_active ? "активен" : "выкл"}
+                    </Badge>
+                  </td>
+                  <td className="px-3 py-2">
+                    <div className="flex items-center justify-end gap-0.5">
+                      <Button variant="ghost" size="sm" onClick={() => open(p)} className="h-7 w-7 p-0">
+                        <Pencil className="h-3 w-3" />
+                      </Button>
+                      <Button variant="ghost" size="sm" onClick={() => open(p)} className="h-7 w-7 p-0">
+                        <Trash2 className="h-3 w-3 text-danger" />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <Modal
         open={editing !== null}
         onClose={() => setEditing(null)}
-        title={
-          editing === null
-            ? ""
-            : editing === "new"
-              ? "Новый промокод"
-              : `Редактирование: ${editing.code}`
-        }
+        title={editing === "new" ? "Новый промокод" : `Редактирование: ${(editing as typeof promos[number]).code}`}
         actions={
           <>
             {editing && editing !== "new" && (
-              <Button
-                variant="danger"
-                size="sm"
-                loading={busy}
-                className="mr-auto"
-                onClick={remove}
-              >
+              <Button variant="danger" size="sm" loading={busy} className="mr-auto" onClick={remove}>
                 <Trash2 className="h-3.5 w-3.5" />
                 Удалить
               </Button>
             )}
-            <Button variant="ghost" size="sm" onClick={() => setEditing(null)}>
-              Отмена
-            </Button>
-            <Button variant="primary" size="sm" loading={busy} onClick={save}>
-              Сохранить
-            </Button>
+            <Button variant="ghost" size="sm" onClick={() => setEditing(null)}>Отмена</Button>
+            <Button variant="primary" size="sm" loading={busy} onClick={save}>Сохранить</Button>
           </>
         }
       >
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3">
           <div className="grid grid-cols-2 gap-3">
             <Field label="Код">
-              <Input
-                className="font-mono uppercase"
-                value={form.code}
-                onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })}
-                placeholder="NUFFY100"
-              />
+              <Input className="font-mono uppercase" value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })} placeholder="NUFFY100" />
             </Field>
             <Field label="Тип бонуса">
-              <Select
-                value={form.bonus_type}
-                onChange={(e) => setForm({ ...form, bonus_type: e.target.value })}
-              >
+              <Select value={form.bonus_type} onChange={(e) => setForm({ ...form, bonus_type: e.target.value })}>
                 <option value="fixed">Фиксированная сумма, ₽</option>
                 <option value="percent">Процент</option>
               </Select>
             </Field>
             <Field label={form.bonus_type === "percent" ? "Процент" : "Сумма, ₽"}>
-              <Input
-                type="number"
-                min={0}
-                step="0.01"
-                value={form.bonus_value}
-                onChange={(e) => setForm({ ...form, bonus_value: e.target.value })}
-              />
+              <Input type="number" min={0} step="0.01" value={form.bonus_value} onChange={(e) => setForm({ ...form, bonus_value: e.target.value })} />
             </Field>
             <Field label="Лимит на пользователя">
-              <Input
-                type="number"
-                min={1}
-                value={form.per_user_limit}
-                onChange={(e) => setForm({ ...form, per_user_limit: e.target.value })}
-              />
+              <Input type="number" min={1} value={form.per_user_limit} onChange={(e) => setForm({ ...form, per_user_limit: e.target.value })} />
             </Field>
             <Field label="Макс. использований (0 = ∞)">
-              <Input
-                type="number"
-                min={0}
-                value={form.max_uses}
-                onChange={(e) => setForm({ ...form, max_uses: e.target.value })}
-              />
+              <Input type="number" min={0} value={form.max_uses} onChange={(e) => setForm({ ...form, max_uses: e.target.value })} />
             </Field>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Начало">
-              <Input
-                type="datetime-local"
-                value={form.starts_at}
-                onChange={(e) => setForm({ ...form, starts_at: e.target.value })}
-              />
+              <Input type="datetime-local" value={form.starts_at} onChange={(e) => setForm({ ...form, starts_at: e.target.value })} />
             </Field>
             <Field label="Конец">
-              <Input
-                type="datetime-local"
-                value={form.ends_at}
-                onChange={(e) => setForm({ ...form, ends_at: e.target.value })}
-              />
+              <Input type="datetime-local" value={form.ends_at} onChange={(e) => setForm({ ...form, ends_at: e.target.value })} />
             </Field>
           </div>
           <label className="flex items-center gap-2 text-[13px] text-ink">
-            <Checkbox
-              checked={form.is_active}
-              onChange={(v) => setForm({ ...form, is_active: v })}
-            />
+            <Checkbox checked={form.is_active} onChange={(v) => setForm({ ...form, is_active: v })} />
             Промокод активен
           </label>
         </div>
